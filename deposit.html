@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Vinox — Deposit</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+.vx-shell{width:100%;max-width:460px;margin:0 auto;flex:1;padding:20px 18px 32px}
+
+.vx-top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.vx-back{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:9px;width:36px;height:36px;display:grid;place-items:center;color:var(--vx-text);cursor:pointer;transition:all .2s;text-decoration:none}
+.vx-back:hover{background:var(--vx-card-2);border-color:var(--vx-line-2)}
+.vx-back i{font-size:18px}
+.vx-title{font-size:17px;font-weight:800;letter-spacing:-0.3px}
+
+.vx-balance-mini{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:12px 14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.vx-balance-mini .k{color:var(--vx-muted);font-weight:500}
+.vx-balance-mini .v{font-weight:800;color:var(--vx-green)}
+
+/* tabs */
+.vx-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;background:var(--vx-card);padding:4px;border-radius:11px;border:1px solid var(--vx-line)}
+.vx-tab{background:none;border:none;color:var(--vx-muted);font-family:'Manrope';font-size:12.5px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.vx-tab i{font-size:15px}
+.vx-tab.active{background:var(--vx-violet);color:#fff}
+
+/* fields */
+.vx-field{position:relative;margin-bottom:12px}
+.vx-field label{display:block;font-size:10.5px;font-weight:700;color:var(--vx-muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;padding-left:2px}
+.vx-field input,.vx-field textarea{width:100%;height:50px;padding:0 14px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;font-family:'Manrope';font-size:13.5px;font-weight:500;color:var(--vx-text);outline:none;transition:border-color .2s;resize:none}
+.vx-field textarea{height:80px;padding:12px 14px;line-height:1.5}
+.vx-field input::placeholder,.vx-field textarea::placeholder{color:var(--vx-muted-2)}
+.vx-field input:focus,.vx-field textarea:focus{border-color:var(--vx-violet);background:rgba(255,255,255,0.05)}
+
+/* amount with suffix */
+.vx-amount-wrap{position:relative}
+.vx-amount-wrap input{padding-right:60px;font-size:16px;font-weight:700}
+.vx-amount-suffix{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:800;color:var(--vx-muted);pointer-events:none}
+
+/* conversion helper */
+.vx-conv{background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.2);border-radius:9px;padding:9px 12px;margin-bottom:14px;font-size:11.5px;color:var(--vx-muted);font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.vx-conv strong{color:var(--vx-gold);font-weight:800}
+.vx-conv .conv-val{color:var(--vx-green);font-weight:800}
+
+/* info box */
+.vx-info{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:13px 14px;margin-bottom:16px}
+.vx-info .info-h{font-size:10.5px;font-weight:800;color:var(--vx-gold);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.vx-info .info-h i{font-size:13px}
+.vx-info .info-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px;gap:8px;align-items:flex-start}
+.vx-info .info-row:last-child{margin-bottom:0}
+.vx-info .info-row .k{color:var(--vx-muted);font-weight:500;flex-shrink:0}
+.vx-info .info-row .v{font-weight:700;color:var(--vx-text);text-align:right;word-break:break-all}
+.vx-info .copy-btn{background:rgba(168,85,247,0.14);border:1px solid rgba(168,85,247,0.3);color:var(--vx-violet);padding:4px 10px;border-radius:6px;font-size:10.5px;font-weight:700;cursor:pointer;transition:all .2s;margin-left:6px;display:inline-flex;align-items:center;gap:3px;vertical-align:middle}
+.vx-info .copy-btn:hover{background:rgba(168,85,247,0.24)}
+.vx-info .copy-btn i{font-size:11px}
+
+/* file upload */
+.vx-upload{position:relative;margin-bottom:12px}
+.vx-upload label{display:block;font-size:10.5px;font-weight:700;color:var(--vx-muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;padding-left:2px}
+.vx-upload-box{border:1.5px dashed var(--vx-line-2);border-radius:10px;padding:22px 14px;text-align:center;cursor:pointer;transition:all .2s;background:var(--vx-card)}
+.vx-upload-box:hover{border-color:var(--vx-violet);background:rgba(168,85,247,0.04)}
+.vx-upload-box.has-file{border-color:var(--vx-green);background:rgba(74,222,128,0.06);border-style:solid}
+.vx-upload-box i{font-size:26px;color:var(--vx-muted);display:block;margin-bottom:6px}
+.vx-upload-box.has-file i{color:var(--vx-green)}
+.vx-upload-box .up-txt{font-size:12px;color:var(--vx-muted);font-weight:500}
+.vx-upload-box .up-txt strong{color:var(--vx-text);font-weight:700}
+.vx-upload-box .up-file{font-size:11px;color:var(--vx-green);font-weight:700;margin-top:4px;word-break:break-all}
+.vx-upload-box input[type=file]{display:none}
+
+/* button */
+.vx-btn{width:100%;height:52px;margin-top:8px;border:none;border-radius:10px;background:var(--vx-violet);color:#fff;font-family:'Manrope';font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s}
+.vx-btn:hover:not(:disabled){background:#9333EA}
+.vx-btn:disabled{opacity:.6;cursor:not-allowed}
+.vx-spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:vxSpin .7s linear infinite;display:inline-block}
+
+.vx-note{font-size:11px;color:var(--vx-muted-2);text-align:center;margin-top:14px;line-height:1.5;padding:0 10px}
+
+/* section */
+.vx-section{display:none;animation:vxFadeUp .3s ease both}
+.vx-section.active{display:block}
+
+/* pending requests */
+.vx-pending{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:13px;margin-bottom:10px}
+.vx-pending-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.vx-pending-amt{font-size:14px;font-weight:800;color:var(--vx-text)}
+.vx-pending-status{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:0.4px;text-transform:uppercase}
+.vx-pending-status.pending{background:rgba(245,200,107,0.14);color:var(--vx-gold)}
+.vx-pending-status.approved{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.vx-pending-status.rejected{background:rgba(255,92,122,0.14);color:var(--vx-danger)}
+.vx-pending-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--vx-muted);font-weight:500;margin-top:5px}
+.vx-empty{text-align:center;padding:22px 16px;color:var(--vx-muted);font-size:12px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:11px}
+
+/* modal */
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+@media(max-width:380px){
+  .vx-shell{padding:16px 14px}
+}
+</style>
+</head>
+<body>
+
+<main class="vx-shell">
+
+  <div class="vx-top">
+    <a href="dashboard.html" class="vx-back"><i class="ph ph-arrow-left"></i></a>
+    <div class="vx-title">Deposit</div>
+  </div>
+
+  <div class="vx-balance-mini">
+    <span class="k">Current Deposit Balance</span>
+    <span class="v" id="vxCurBalance">$0.00</span>
+  </div>
+
+  <!-- tabs -->
+  <div class="vx-tabs">
+    <button class="vx-tab active" data-tab="usdt"><i class="ph ph-currency-btc"></i> USDT (BEP20)</button>
+    <button class="vx-tab" data-tab="naira"><i class="ph ph-bank"></i> Bank (₦)</button>
+  </div>
+
+  <!-- ===== USDT ===== -->
+  <section class="vx-section active" id="section-usdt">
+
+    <div class="vx-info">
+      <div class="info-h"><i class="ph ph-wallet"></i> Send USDT to this wallet</div>
+      <div class="info-row">
+        <span class="k">Network</span>
+        <span class="v">BEP20 (BSC)</span>
+      </div>
+      <div class="info-row">
+        <span class="k">Address</span>
+        <span class="v" style="max-width:60%">
+          <span id="vxUsdtAddress">0x0000000000000000000000000000000000000000</span>
+          <button class="copy-btn" id="vxCopyUsdt"><i class="ph ph-copy"></i> Copy</button>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="k">Min deposit</span>
+        <span class="v">$5.00</span>
+      </div>
+    </div>
+
+    <div class="vx-field">
+      <label>Amount Sent (USDT)</label>
+      <div class="vx-amount-wrap">
+        <input type="number" id="usdtAmount" placeholder="0.00" min="5" step="0.01" inputmode="decimal">
+        <span class="vx-amount-suffix">USDT</span>
+      </div>
+    </div>
+    <div class="vx-conv" id="usdtConv" style="display:none">
+      <span>You will receive</span>
+      <span class="conv-val" id="usdtConvVal">$0.00</span>
+    </div>
+
+    <div class="vx-field">
+      <label>TX ID / Hash</label>
+      <input type="text" id="usdtTxId" placeholder="Enter transaction hash" autocomplete="off">
+    </div>
+
+    <div class="vx-upload">
+      <label>Payment Screenshot</label>
+      <div class="vx-upload-box" id="usdtUploadBox">
+        <i class="ph ph-upload-simple"></i>
+        <div class="up-txt"><strong>Tap to upload</strong> screenshot</div>
+        <div class="up-file" id="usdtFileName"></div>
+        <input type="file" id="usdtFile" accept="image/*">
+      </div>
+    </div>
+
+    <button class="vx-btn" id="usdtSubmit">
+      <span id="usdtBtnText">Request Deposit</span>
+    </button>
+
+    <div class="vx-note">Your deposit will be credited after admin approval. Usually within 5–30 minutes.</div>
+  </section>
+
+  <!-- ===== NAIRA ===== -->
+  <section class="vx-section" id="section-naira">
+
+    <div class="vx-info">
+      <div class="info-h"><i class="ph ph-bank"></i> Bank Transfer Details</div>
+      <div class="info-row">
+        <span class="k">Bank</span>
+        <span class="v">GTBank</span>
+      </div>
+      <div class="info-row">
+        <span class="k">Account No.</span>
+        <span class="v">
+          0000000000
+          <button class="copy-btn" id="vxCopyAcct"><i class="ph ph-copy"></i> Copy</button>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="k">Account Name</span>
+        <span class="v">Vinox Ltd</span>
+      </div>
+      <div class="info-row">
+        <span class="k">Rate</span>
+        <span class="v">$1 = ₦1,500</span>
+      </div>
+      <div class="info-row">
+        <span class="k">Min deposit</span>
+        <span class="v">₦7,500 ($5.00)</span>
+      </div>
+    </div>
+
+    <div class="vx-field">
+      <label>Amount You Will Send (₦)</label>
+      <div class="vx-amount-wrap">
+        <input type="number" id="nairaAmount" placeholder="7500" min="7500" step="100" inputmode="numeric">
+        <span class="vx-amount-suffix">NGN</span>
+      </div>
+    </div>
+    <div class="vx-conv" id="nairaConv" style="display:none">
+      <span>You will receive in your deposit wallet</span>
+      <span class="conv-val" id="nairaConvVal">$0.00</span>
+    </div>
+
+    <div class="vx-field">
+      <label>Sender Account Name</label>
+      <input type="text" id="nairaSenderName" placeholder="Name on your bank account" autocomplete="off">
+    </div>
+
+    <button class="vx-btn" id="nairaSubmit">
+      <span id="nairaBtnText">Request Deposit</span>
+    </button>
+
+    <div class="vx-note">Your deposit will be credited after admin verifies your transfer. Usually within 5–30 minutes.</div>
+  </section>
+
+  <!-- pending requests -->
+  <div class="vx-sec-h" style="font-size:13px;font-weight:800;margin:22px 0 12px;display:flex;justify-content:space-between;align-items:center">
+    <span>Recent Deposit Requests</span>
+    <small style="font-size:11px;color:var(--vx-muted);font-weight:600" id="vxPendingCount">0</small>
+  </div>
+  <div id="vxPendingList"></div>
+
+</main>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+const RATE = 1500;
+const MIN_USD = 5;
+
+let ME = null;
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtNGN(v){ return '₦' + Math.round(+v||0).toLocaleString(); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric', hour:'2-digit', minute:'2-digit'});
+}
+
+// ================== AUTH ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){ window.location.href = 'login.html'; return; }
+    ME = { uid: user.uid, username: uidSnap.data().username };
+    await loadBalance();
+    await loadPending();
+  }catch(e){
+    console.error(e);
+    vxModal('error','Failed to load deposit page.');
+  }
+});
+
+async function loadBalance(){
+  const snap = await getDoc(doc(db,'users',ME.username));
+  if(snap.exists()){
+    $('vxCurBalance').textContent = fmtUSD(snap.data().depositWallet || 0);
+  }
+}
+
+// ================== TABS ==================
+document.querySelectorAll('.vx-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.vx-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.vx-section').forEach(s => s.classList.remove('active'));
+    $('section-' + t.dataset.tab).classList.add('active');
+  });
+});
+
+// ================== COPY BUTTONS ==================
+function wireCopy(btnId, valueFn, label){
+  $(btnId).addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(valueFn());
+      vxModal('success', `${label} copied!`);
+    }catch{ vxModal('error','Copy failed.'); }
+  });
+}
+wireCopy('vxCopyUsdt', () => $('vxUsdtAddress').textContent.trim(), 'Wallet address');
+wireCopy('vxCopyAcct', () => '0000000000', 'Account number');
+
+// ================== USDT CONVERSION ==================
+$('usdtAmount').addEventListener('input', function(){
+  const v = parseFloat(this.value) || 0;
+  const el = $('usdtConv');
+  if(v > 0){
+    el.style.display = 'flex';
+    $('usdtConvVal').textContent = fmtUSD(v);
+  } else {
+    el.style.display = 'none';
+  }
+});
+
+// ================== NAIRA CONVERSION ==================
+$('nairaAmount').addEventListener('input', function(){
+  const v = parseFloat(this.value) || 0;
+  const el = $('nairaConv');
+  if(v > 0){
+    el.style.display = 'flex';
+    const usd = v / RATE;
+    $('nairaConvVal').textContent = fmtUSD(usd);
+  } else {
+    el.style.display = 'none';
+  }
+});
+
+// ================== IMAGE COMPRESSION ==================
+async function compressImage(file, maxSize = 1024, quality = 0.7){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if(width > maxSize || height > maxSize){
+          if(width > height){
+            height = Math.round(height * (maxSize / width));
+            width = maxSize;
+          } else {
+            width = Math.round(width * (maxSize / height));
+            height = maxSize;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ================== FILE UPLOAD ==================
+let usdtFileDataUrl = null;
+$('usdtUploadBox').addEventListener('click', () => $('usdtFile').click());
+
+$('usdtFile').addEventListener('change', async function(){
+  const file = this.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    vxModal('error','Please select an image file.');
+    return;
+  }
+  try{
+    usdtFileDataUrl = await compressImage(file);
+    const box = $('usdtUploadBox');
+    box.classList.add('has-file');
+    box.querySelector('i').className = 'ph ph-check-circle';
+    box.querySelector('.up-txt').innerHTML = `<strong>Screenshot ready</strong>`;
+    $('usdtFileName').textContent = file.name;
+  }catch(e){
+    console.error(e);
+    vxModal('error','Could not process image. Try another.');
+  }
+});
+
+// ================== USDT SUBMIT ==================
+let usdtSubmitting = false;
+$('usdtSubmit').addEventListener('click', async () => {
+  if(usdtSubmitting) return;
+
+  const amount = parseFloat($('usdtAmount').value) || 0;
+  const txId = $('usdtTxId').value.trim();
+
+  if(!amount || amount < MIN_USD)
+    return vxModal('warning', `Minimum deposit is ${fmtUSD(MIN_USD)}.`, 'Invalid Amount');
+  if(!txId)
+    return vxModal('warning', 'Enter your TX ID / hash.', 'Missing TX ID');
+  if(!usdtFileDataUrl)
+    return vxModal('warning', 'Upload your payment screenshot.', 'Missing Screenshot');
+
+  usdtSubmitting = true;
+  const btn = $('usdtSubmit');
+  btn.disabled = true;
+  $('usdtBtnText').innerHTML = '<span class="vx-spinner"></span> Submitting…';
+
+  try{
+    await addDoc(collection(db,'depositRequests'), {
+      username: ME.username,
+      uid: ME.uid,
+      method: 'usdt',
+      currency: 'USDT',
+      network: 'BEP20',
+      amountUSDT: +amount.toFixed(2),
+      amountUSD: +amount.toFixed(2),
+      txId,
+      screenshot: usdtFileDataUrl,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+      createdAtISO: new Date().toISOString()
+    });
+
+    vxModal('success', 'Deposit request submitted! Awaiting admin approval.', 'Request Sent');
+
+    $('usdtAmount').value = '';
+    $('usdtTxId').value = '';
+    $('usdtFileName').textContent = '';
+    $('usdtConv').style.display = 'none';
+    usdtFileDataUrl = null;
+    const box = $('usdtUploadBox');
+    box.classList.remove('has-file');
+    box.querySelector('i').className = 'ph ph-upload-simple';
+    box.querySelector('.up-txt').innerHTML = '<strong>Tap to upload</strong> screenshot';
+    $('usdtFile').value = '';
+
+    await loadPending();
+  }catch(e){
+    console.error(e);
+    vxModal('error','Could not submit request. Try again.');
+  } finally {
+    usdtSubmitting = false;
+    btn.disabled = false;
+    $('usdtBtnText').textContent = 'Request Deposit';
+  }
+});
+
+// ================== NAIRA SUBMIT ==================
+let nairaSubmitting = false;
+$('nairaSubmit').addEventListener('click', async () => {
+  if(nairaSubmitting) return;
+
+  const amountNGN = parseFloat($('nairaAmount').value) || 0;
+  const senderName = $('nairaSenderName').value.trim();
+
+  if(!amountNGN || amountNGN < (MIN_USD * RATE))
+    return vxModal('warning', `Minimum deposit is ${fmtNGN(MIN_USD * RATE)} (${fmtUSD(MIN_USD)}).`, 'Invalid Amount');
+  if(!senderName)
+    return vxModal('warning', 'Enter the sender account name.', 'Missing Name');
+
+  nairaSubmitting = true;
+  const btn = $('nairaSubmit');
+  btn.disabled = true;
+  $('nairaBtnText').innerHTML = '<span class="vx-spinner"></span> Submitting…';
+
+  try{
+    const usdAmount = +(amountNGN / RATE).toFixed(2);
+    await addDoc(collection(db,'depositRequests'), {
+      username: ME.username,
+      uid: ME.uid,
+      method: 'bank',
+      currency: 'NGN',
+      amountNGN: Math.round(amountNGN),
+      amountUSD: usdAmount,
+      rate: RATE,
+      senderName,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+      createdAtISO: new Date().toISOString()
+    });
+
+    vxModal('success', 'Deposit request submitted! Awaiting admin approval.', 'Request Sent');
+
+    $('nairaAmount').value = '';
+    $('nairaSenderName').value = '';
+    $('nairaConv').style.display = 'none';
+
+    await loadPending();
+  }catch(e){
+    console.error(e);
+    vxModal('error','Could not submit request. Try again.');
+  } finally {
+    nairaSubmitting = false;
+    btn.disabled = false;
+    $('nairaBtnText').textContent = 'Request Deposit';
+  }
+});
+
+// ================== PENDING LIST ==================
+async function loadPending(){
+  try{
+    const q = query(collection(db,'depositRequests'), where('username','==',ME.username));
+    const snap = await getDocs(q);
+    const list = [];
+    snap.forEach(d => list.push({ id:d.id, ...d.data() }));
+    list.sort((a,b) => {
+      const aT = a.createdAt?.toDate?.().getTime?.() || new Date(a.createdAtISO||0).getTime();
+      const bT = b.createdAt?.toDate?.().getTime?.() || new Date(b.createdAtISO||0).getTime();
+      return bT - aT;
+    });
+    renderPending(list);
+  }catch(e){
+    console.warn('Could not load pending:', e);
+  }
+}
+
+function renderPending(list){
+  const el = $('vxPendingList');
+  $('vxPendingCount').textContent = `${list.length} total`;
+  if(!list.length){
+    el.innerHTML = `<div class="vx-empty">No deposit requests yet.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(r => {
+    const isUSDT = r.method === 'usdt';
+    const amtDisplay = isUSDT
+      ? `${(+r.amountUSDT||0).toFixed(2)} USDT`
+      : `${fmtNGN(r.amountNGN)} → ${fmtUSD(r.amountUSD)}`;
+    return `
+      <div class="vx-pending">
+        <div class="vx-pending-top">
+          <div class="vx-pending-amt">${amtDisplay}</div>
+          <div class="vx-pending-status ${r.status}">${r.status}</div>
+        </div>
+        <div class="vx-pending-meta">
+          <span>${isUSDT ? 'USDT (BEP20)' : 'Bank Transfer'}</span>
+          <span>${fmtDate(r.createdAt || r.createdAtISO)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
