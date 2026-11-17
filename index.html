@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Vinox — Create Account</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.14),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.08),transparent 60%),
+    #0B0716}
+
+.vx-shell{width:100%;max-width:420px;margin:0 auto;flex:1;display:flex;flex-direction:column;padding:32px 22px 32px}
+
+.vx-brand{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--vx-text);margin-bottom:36px;text-align:center}
+.vx-brand span{color:var(--vx-gold)}
+
+.vx-heading{margin-bottom:26px}
+.vx-heading h1{font-size:24px;font-weight:700;letter-spacing:-0.6px;margin:0 0 6px;color:var(--vx-text)}
+.vx-heading p{font-size:13px;color:var(--vx-muted);margin:0;line-height:1.5}
+
+.vx-field{position:relative;margin-bottom:12px}
+.vx-field input{width:100%;height:52px;padding:0 44px 0 16px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;font-family:'Manrope';font-size:14px;font-weight:500;color:var(--vx-text);outline:none;transition:border-color .2s}
+.vx-field input::placeholder{color:var(--vx-muted)}
+.vx-field input:focus{border-color:var(--vx-violet);background:rgba(255,255,255,0.05)}
+.vx-field.phone input{padding-left:78px}
+.vx-field .vx-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:var(--vx-violet);pointer-events:none}
+.vx-field .vx-prefix::after{content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:1px;height:18px;background:rgba(255,255,255,0.12)}
+.vx-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--vx-muted);cursor:pointer;padding:8px;font-size:1.1rem;border-radius:8px}
+.vx-eye:hover{color:var(--vx-violet)}
+
+.vx-status{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.1rem;line-height:0;display:none;pointer-events:none}
+.vx-field.has-eye .vx-status{right:44px}
+.vx-field.has-eye input{padding-right:72px}
+.vx-field.ok .vx-status,.vx-field.bad .vx-status,.vx-field.busy .vx-status{display:block}
+.vx-field.ok .vx-status{color:#4ADE80}
+.vx-field.bad .vx-status{color:var(--vx-danger)}
+.vx-field.busy .vx-status{color:var(--vx-gold)}
+.vx-field.busy .vx-status i{display:inline-block;animation:vxSpin .9s linear infinite}
+
+.vx-ref-banner{display:none;align-items:center;gap:8px;padding:10px 12px;margin-bottom:12px;border-radius:10px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.25);font-size:12px;color:#DCC8FF;font-weight:500}
+.vx-ref-banner.show{display:flex}
+.vx-ref-banner i{color:var(--vx-violet);font-size:15px}
+.vx-ref-banner strong{color:var(--vx-gold);font-weight:800}
+
+.vx-btn{width:100%;height:52px;margin-top:8px;border:none;border-radius:10px;background:var(--vx-violet);color:#fff;font-family:'Manrope';font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s}
+.vx-btn:hover:not(:disabled){background:#9333EA}
+.vx-btn:disabled{opacity:.6;cursor:not-allowed}
+.vx-spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:vxSpin .7s linear infinite;display:inline-block}
+
+.vx-login{text-align:center;margin-top:20px;font-size:13px;color:var(--vx-muted)}
+.vx-login a{color:var(--vx-gold);font-weight:700;text-decoration:none}
+.vx-login a:hover{text-decoration:underline}
+
+.vx-foot{margin-top:auto;padding-top:24px;text-align:center;font-size:11px;color:#6E6390}
+
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+</style>
+</head>
+<body>
+
+<main class="vx-shell">
+
+  <div class="vx-brand">Vinox<span>.</span></div>
+
+  <div class="vx-heading">
+    <h1>Create account</h1>
+    <p>Fill in your details to get started.</p>
+  </div>
+
+  <div class="vx-ref-banner" id="vxRefBanner">
+    <i class="ph ph-user-check"></i>
+    <span>Referred by <strong id="vxRefBannerName">---</strong></span>
+  </div>
+
+  <form id="vxSignupForm" autocomplete="off" novalidate>
+
+    <div class="vx-field phone">
+      <span class="vx-prefix">+234</span>
+      <input type="tel" id="phone" placeholder="Phone number" maxlength="11" required autocomplete="tel" inputmode="numeric">
+      <span class="vx-status"></span>
+    </div>
+
+    <div class="vx-field">
+      <input type="email" id="email" placeholder="Email address" required autocomplete="email">
+      <span class="vx-status"></span>
+    </div>
+
+    <div class="vx-field">
+      <input type="text" id="username" placeholder="Username" maxlength="20" required autocomplete="username">
+      <span class="vx-status"></span>
+    </div>
+
+    <div class="vx-field has-eye">
+      <input type="password" id="password" placeholder="Password" required autocomplete="new-password">
+      <span class="vx-status"></span>
+      <button type="button" class="vx-eye" data-target="password" aria-label="Show password"><i class="ph ph-eye"></i></button>
+    </div>
+
+    <div class="vx-field has-eye">
+      <input type="password" id="confirmPassword" placeholder="Confirm password" required autocomplete="new-password">
+      <span class="vx-status"></span>
+      <button type="button" class="vx-eye" data-target="confirmPassword" aria-label="Show password"><i class="ph ph-eye"></i></button>
+    </div>
+
+    <div class="vx-field has-eye">
+      <input type="tel" id="tradePassword" placeholder="Trade PIN (6 digits)" maxlength="6" required inputmode="numeric" autocomplete="off">
+      <span class="vx-status"></span>
+      <button type="button" class="vx-eye" data-target="tradePassword" aria-label="Show PIN"><i class="ph ph-eye"></i></button>
+    </div>
+
+    <div class="vx-field">
+      <input type="text" id="referralCode" placeholder="Invite code (optional)" maxlength="20" autocomplete="off">
+      <span class="vx-status"></span>
+    </div>
+
+    <button type="submit" class="vx-btn" id="vxSignupBtn">
+      <span id="vxBtnText">Create Account</span>
+    </button>
+
+  </form>
+
+  <div class="vx-login">Already have an account? <a href="login.html">Sign in</a></div>
+
+  <div class="vx-foot">© Vinox</div>
+
+</main>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, serverTimestamp, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+const WELCOME_BONUS = 0;   // no welcome bonus — user starts at $0.00
+
+// top-left modal
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, message, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `
+    <div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body">
+      <div class="m-title">${title || th.title}</div>
+      <div class="m-msg"></div>
+    </div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = message;
+  const kill = () => { m.classList.remove('show'); setTimeout(() => m.remove(), 300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(() => m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+// field state
+const ICONS = { ok:'ph-check-circle', bad:'ph-x-circle', busy:'ph-circle-notch' };
+function setState(id, state){
+  const f = $(id).closest('.vx-field');
+  const s = f.querySelector('.vx-status');
+  f.classList.remove('ok','bad','busy');
+  if(state){ f.classList.add(state); s.innerHTML = `<i class="ph ${ICONS[state]}"></i>`; }
+  else s.innerHTML = '';
+}
+
+const fmtOk = {
+  phone: v => /^(070|080|081|090|091)\d{8}$/.test(v),
+  email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+  username: v => /^[a-zA-Z]{4,20}$/.test(v),
+  password: v => v.length >= 6,
+  tradePassword: v => /^\d{6}$/.test(v)
+};
+const check = (id, ok) => { const v = $(id).value; setState(id, v ? (ok(v) ? 'ok' : 'bad') : ''); };
+
+// eye
+document.querySelectorAll('.vx-eye').forEach(btn => btn.addEventListener('click', () => {
+  const inp = $(btn.dataset.target), ic = btn.querySelector('i');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  ic.className = show ? 'ph ph-eye-slash' : 'ph ph-eye';
+}));
+
+$('phone').addEventListener('input', function(){ this.value = this.value.replace(/\D/g,'').slice(0,11); check('phone', fmtOk.phone); });
+$('email').addEventListener('input', () => check('email', fmtOk.email));
+$('password').addEventListener('input', () => {
+  check('password', fmtOk.password);
+  if($('confirmPassword').value) check('confirmPassword', v => v === $('password').value);
+});
+$('confirmPassword').addEventListener('input', () => check('confirmPassword', v => v === $('password').value));
+$('tradePassword').addEventListener('input', function(){ this.value = this.value.replace(/\D/g,'').slice(0,6); check('tradePassword', fmtOk.tradePassword); });
+
+// username availability
+let userTimer = null, userToken = 0;
+$('username').addEventListener('input', function(){
+  clearTimeout(userTimer);
+  const v = this.value.trim(), token = ++userToken;
+  if(!v) return setState('username','');
+  if(!fmtOk.username(v)) return setState('username','bad');
+  setState('username','busy');
+  userTimer = setTimeout(async () => {
+    try{
+      const snap = await getDoc(doc(db,'users',v.toUpperCase()));
+      if(token === userToken) setState('username', snap.exists() ? 'bad' : 'ok');
+    }catch(e){ if(token === userToken) setState('username','ok'); }
+  }, 450);
+});
+
+// referral live check
+let refTimer = null, refToken = 0;
+function checkReferral(){
+  clearTimeout(refTimer);
+  const v = $('referralCode').value.trim(), token = ++refToken;
+  $('vxRefBanner').classList.remove('show');
+  if(!v) return setState('referralCode','');
+  setState('referralCode','busy');
+  refTimer = setTimeout(async () => {
+    try{
+      const snap = await getDoc(doc(db,'users',v));
+      if(token !== refToken) return;
+      const exists = snap.exists();
+      setState('referralCode', exists ? 'ok' : 'bad');
+      if(exists){ $('vxRefBannerName').textContent = v; $('vxRefBanner').classList.add('show'); }
+    }catch(e){ if(token === refToken) setState('referralCode',''); }
+  }, 450);
+}
+$('referralCode').addEventListener('input', function(){
+  this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,20);
+  checkReferral();
+});
+
+// ?ref=CODE
+(() => {
+  const r = new URLSearchParams(window.location.search).get('ref');
+  if(!r) return;
+  $('referralCode').value = r.trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,20);
+  checkReferral();
+})();
+
+// signup
+let submitting = false;
+function setLoading(l){
+  submitting = l;
+  $('vxSignupBtn').disabled = l;
+  $('vxBtnText').innerHTML = l ? '<span class="vx-spinner"></span> Setting up…' : 'Create Account';
+}
+
+async function handleSignup(){
+  if(submitting) return;
+
+  const phone = $('phone').value.trim();
+  const email = $('email').value.trim().toLowerCase();
+  const username = $('username').value.trim().toUpperCase();
+  const password = $('password').value;
+  const confirmPassword = $('confirmPassword').value;
+  const tradePassword = $('tradePassword').value.trim();
+  const refCode = $('referralCode').value.trim().toUpperCase();
+
+  if(!phone || !email || !username || !password || !confirmPassword || !tradePassword)
+    return vxModal('warning','Please fill in all required fields.','Missing Info');
+  if(!fmtOk.phone(phone)) return vxModal('error','Enter a valid Nigerian phone number.');
+  if(!fmtOk.email(email)) return vxModal('error','Enter a valid email address.');
+  if(!fmtOk.username(username)) return vxModal('error','Username: letters only, 4–20 characters.');
+  if(password.length < 6) return vxModal('error','Password must be at least 6 characters.');
+  if(password !== confirmPassword) return vxModal('error','Passwords do not match.');
+  if(!fmtOk.tradePassword(tradePassword)) return vxModal('error','Trade PIN must be exactly 6 digits.');
+  if(tradePassword === password) return vxModal('error','Trade PIN must differ from login password.');
+  if(refCode && refCode === username) return vxModal('error','You cannot refer yourself.');
+
+  setLoading(true);
+  let cred = null;
+
+  try{
+    if(refCode){
+      const rs = await getDoc(doc(db,'users',refCode));
+      if(!rs.exists()){ setState('referralCode','bad'); setLoading(false); return vxModal('error','Invite code not found.'); }
+    }
+    const us = await getDoc(doc(db,'users',username));
+    if(us.exists()){ setState('username','bad'); setLoading(false); return vxModal('error','Username already taken.'); }
+
+    cred = await createUserWithEmailAndPassword(auth, email, password);
+    const uid = cred.user.uid;
+    const referrer = refCode || '';
+
+    try{
+      const batch = writeBatch(db);
+      batch.set(doc(db,'users',username), {
+        uid, email, phone, username,
+        ownReferralCode: username,
+        referredBy: referrer,
+        tradePassword,
+        depositWallet: 0,
+        withdrawalWallet: 0,
+        totalDeposited: 0,
+        totalWithdrawn: 0,
+        totalEarnings: 0,
+        referralBonus: 0,
+        referralCount: 0,
+        firstPurchaseDone: false,
+        isAdmin: false,
+        isActive: true,
+        accountStatus: 'active',
+        createdAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+        registrationDate: new Date().toISOString()
+      });
+      batch.set(doc(db,'usersByUid',uid), { username, email, referredBy: referrer });
+      batch.set(doc(db,'transactionHistory',username), { username, transactions:[], createdAt: serverTimestamp() });
+      batch.set(doc(db,'investments',username), { username, activeInvestments:[], totalInvested:0, totalReturns:0, createdAt: serverTimestamp() });
+      await batch.commit();
+    }catch(e){
+      try{ await cred.user.delete(); }catch(_){}
+      throw e;
+    }
+
+    sessionStorage.setItem('userLoggedIn','true');
+    sessionStorage.setItem('userEmail', email);
+    sessionStorage.setItem('userUid', uid);
+    sessionStorage.setItem('username', username);
+    sessionStorage.setItem('userData', JSON.stringify({
+      username, email,
+      depositWallet: 0, withdrawalWallet: 0,
+      totalDeposited: 0, totalWithdrawn: 0,
+      referralCount: 0, referralBonus: 0,
+      activePlan: '', isAdmin: false
+    }));
+
+    vxModal('success', referrer
+      ? `Welcome to Vinox! You're connected to ${referrer}.`
+      : `Welcome to Vinox! Your account is ready.`,
+      'Account Created');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+
+  }catch(err){
+    setLoading(false);
+    console.error('Signup error:', err);
+    const messages = {
+      'auth/email-already-in-use':'This email is already registered. Try signing in.',
+      'auth/invalid-email':'That email address looks invalid.',
+      'auth/weak-password':'Password is too weak. Use at least 6 characters.',
+      'auth/network-request-failed':'Network error. Check your connection.',
+      'auth/too-many-requests':'Too many attempts. Please wait a moment.',
+      'permission-denied':'Could not save your account. Please try again.'
+    };
+    vxModal('error', messages[err.code] || 'Something went wrong. Please try again.');
+  }
+}
+
+$('vxSignupForm').addEventListener('submit', e => { e.preventDefault(); handleSignup(); });
+</script>
+</body>
+</html>
