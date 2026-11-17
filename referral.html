@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Vinox — Referral</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;padding-bottom:76px}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+.vx-shell{width:100%;max-width:460px;margin:0 auto;flex:1;padding:20px 18px 20px}
+
+.vx-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.vx-brand{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.vx-brand span{color:var(--vx-gold)}
+
+.vx-sec-h{font-size:13px;font-weight:800;letter-spacing:0.3px;color:var(--vx-text);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between}
+.vx-sec-h small{font-size:11px;color:var(--vx-muted);font-weight:600}
+
+/* invite card */
+.vx-invite-card{background:linear-gradient(135deg,rgba(168,85,247,0.14),rgba(245,200,107,0.06));border:1px solid var(--vx-line-2);border-radius:14px;padding:18px 16px;margin-bottom:16px;text-align:center;animation:vxFadeUp .4s ease both}
+.vx-invite-card .ic-lbl{font-size:10.5px;color:var(--vx-muted);letter-spacing:0.6px;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.vx-invite-card .ic-code{font-size:24px;font-weight:800;letter-spacing:2px;color:var(--vx-gold);margin-bottom:14px;word-break:break-all}
+.vx-invite-card .ic-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.vx-invite-card button{background:var(--vx-violet);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-family:'Manrope';font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:6px}
+.vx-invite-card button:hover{background:#9333EA}
+.vx-invite-card button.alt{background:rgba(245,200,107,0.14);color:var(--vx-gold);border:1px solid rgba(245,200,107,0.3)}
+.vx-invite-card button.alt:hover{background:rgba(245,200,107,0.22)}
+
+/* summary */
+.vx-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;animation:vxFadeUp .4s ease both}
+.vx-sum-card{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:12px 13px}
+.vx-sum-card .sk{font-size:10px;color:var(--vx-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px}
+.vx-sum-card .sv{font-size:17px;font-weight:800;color:var(--vx-text)}
+.vx-sum-card .sv.earn{color:var(--vx-green)}
+
+/* tier cards */
+.vx-tier{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:13px;margin-bottom:10px;animation:vxFadeUp .4s ease both}
+.vx-tier-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.vx-tier-lbl{font-size:12.5px;font-weight:800}
+.vx-tier-pct{font-size:11px;font-weight:800;color:var(--vx-gold);background:rgba(245,200,107,0.12);padding:3px 9px;border-radius:5px}
+.vx-tier-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vx-tier-stats div{background:rgba(11,7,22,0.5);border-radius:7px;padding:8px 10px}
+.vx-tier-stats span{display:block;font-size:9px;color:var(--vx-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:2px}
+.vx-tier-stats strong{font-size:13px;font-weight:800}
+
+/* downline items */
+.vx-dl{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:13px;margin-bottom:8px;animation:vxFadeUp .4s ease both}
+.vx-dl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.vx-dl-name{font-size:13px;font-weight:800;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.vx-dl-name .lvl{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:4px;background:rgba(168,85,247,0.16);color:var(--vx-violet);letter-spacing:0.3px}
+.vx-dl-name .lvl.l2{background:rgba(245,200,107,0.16);color:var(--vx-gold)}
+.vx-dl-name .lvl.l3{background:rgba(74,222,128,0.16);color:var(--vx-green)}
+.vx-dl-status{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:0.4px;text-transform:uppercase}
+.vx-dl-status.paid{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.vx-dl-status.pending{background:rgba(154,143,184,0.14);color:var(--vx-muted)}
+.vx-dl-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px}
+.vx-dl-info div{background:rgba(11,7,22,0.5);border-radius:7px;padding:7px 9px;display:flex;flex-direction:column;gap:2px}
+.vx-dl-info .ik{color:var(--vx-muted);font-weight:600;font-size:9px;letter-spacing:0.4px;text-transform:uppercase}
+.vx-dl-info .iv{color:var(--vx-text);font-weight:700;font-size:11.5px}
+.vx-dl-info .iv.earn{color:var(--vx-green)}
+.vx-dl-info .iv.pending{color:var(--vx-muted)}
+
+/* invite rules */
+.vx-rules{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px 16px;margin-top:6px;animation:vxFadeUp .4s ease both}
+.vx-rules h4{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;color:var(--vx-muted)}
+.vx-rules ul{margin:0;padding:0;list-style:none}
+.vx-rules li{font-size:12px;color:var(--vx-muted);line-height:1.6;padding-left:16px;position:relative;margin-bottom:6px}
+.vx-rules li:last-child{margin-bottom:0}
+.vx-rules li::before{content:'';position:absolute;left:2px;top:8px;width:5px;height:5px;border-radius:50%;background:var(--vx-violet)}
+.vx-rules li strong{color:var(--vx-text);font-weight:700}
+
+/* empty */
+.vx-empty{text-align:center;padding:24px 16px;color:var(--vx-muted);font-size:12.5px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:12px}
+.vx-empty i{font-size:32px;color:var(--vx-muted-2);display:block;margin-bottom:8px}
+
+/* bottom nav */
+.vx-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,7,22,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--vx-line);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.vx-nav-inner{max-width:460px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.vx-nav button{background:none;border:none;color:var(--vx-muted);font-family:'Manrope';font-size:10px;font-weight:700;cursor:pointer;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.3px;transition:color .2s}
+.vx-nav button i{font-size:20px}
+.vx-nav button.active{color:var(--vx-violet)}
+
+/* modal */
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+@media(max-width:380px){
+  .vx-shell{padding:16px 14px}
+  .vx-invite-card .ic-code{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<main class="vx-shell">
+
+  <div class="vx-top">
+    <div class="vx-brand">Vinox<span>.</span></div>
+  </div>
+
+  <!-- invite card -->
+  <div class="vx-invite-card">
+    <div class="ic-lbl">Your Invite Code</div>
+    <div class="ic-code" id="vxInviteCode">—</div>
+    <div class="ic-actions">
+      <button id="vxCopyCode"><i class="ph ph-copy"></i> Copy Code</button>
+      <button id="vxCopyLink" class="alt"><i class="ph ph-link"></i> Copy Link</button>
+    </div>
+  </div>
+
+  <!-- summary -->
+  <div class="vx-summary">
+    <div class="vx-sum-card">
+      <div class="sk">Total Downlines</div>
+      <div class="sv" id="vxTotalDownlines">0</div>
+    </div>
+    <div class="vx-sum-card">
+      <div class="sk">Total Earned</div>
+      <div class="sv earn" id="vxTotalEarned">$0.00</div>
+    </div>
+  </div>
+
+  <!-- tiers -->
+  <div class="vx-sec-h">Commission Tiers</div>
+
+  <div class="vx-tier">
+    <div class="vx-tier-top">
+      <div class="vx-tier-lbl">Level 1 · Direct</div>
+      <div class="vx-tier-pct">15%</div>
+    </div>
+    <div class="vx-tier-stats">
+      <div><span>Referrals</span><strong id="vxL1Count">0</strong></div>
+      <div><span>Earnings</span><strong id="vxL1Earn">$0.00</strong></div>
+    </div>
+  </div>
+
+  <div class="vx-tier">
+    <div class="vx-tier-top">
+      <div class="vx-tier-lbl">Level 2 · Indirect</div>
+      <div class="vx-tier-pct">3%</div>
+    </div>
+    <div class="vx-tier-stats">
+      <div><span>Referrals</span><strong id="vxL2Count">0</strong></div>
+      <div><span>Earnings</span><strong id="vxL2Earn">$0.00</strong></div>
+    </div>
+  </div>
+
+  <div class="vx-tier">
+    <div class="vx-tier-top">
+      <div class="vx-tier-lbl">Level 3 · Extended</div>
+      <div class="vx-tier-pct">1%</div>
+    </div>
+    <div class="vx-tier-stats">
+      <div><span>Referrals</span><strong id="vxL3Count">0</strong></div>
+      <div><span>Earnings</span><strong id="vxL3Earn">$0.00</strong></div>
+    </div>
+  </div>
+
+  <!-- downlines -->
+  <div class="vx-sec-h" style="margin-top:22px">Your Downlines <small id="vxDlCount">0</small></div>
+  <div id="vxDownlines"></div>
+
+  <!-- rules -->
+  <div class="vx-rules">
+    <h4>How Referral Works</h4>
+    <ul>
+      <li><strong>Level 1 (15%)</strong> — your direct signups</li>
+      <li><strong>Level 2 (3%)</strong> — people your L1 referred</li>
+      <li><strong>Level 3 (1%)</strong> — people your L2 referred</li>
+      <li>Bonus pays <strong>once</strong> — when a downline buys their <strong>first plan</strong></li>
+      <li>Commission is credited to your <strong>withdrawal wallet</strong> instantly</li>
+      <li>No limit on how many people you can refer</li>
+    </ul>
+  </div>
+
+</main>
+
+<nav class="vx-nav">
+  <div class="vx-nav-inner">
+    <button data-href="dashboard.html"><i class="ph ph-house"></i>Dashboard</button>
+    <button class="active" data-href="referral.html"><i class="ph ph-users-three"></i>Referral</button>
+    <button data-href="transactions.html"><i class="ph ph-receipt"></i>History</button>
+    <button data-href="profile.html"><i class="ph ph-user"></i>Profile</button>
+  </div>
+</nav>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection, query, where, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+const REF_RATES = { 1: 0.15, 2: 0.03, 3: 0.01 };
+
+let ME = null;
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+// ================== FORMATTERS ==================
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+// ================== AUTH BOOTSTRAP ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){
+      window.location.href = 'login.html';
+      return;
+    }
+    ME = { uid: user.uid, username: uidSnap.data().username };
+    $('vxInviteCode').textContent = ME.username;
+    await loadAll();
+  }catch(e){
+    console.error(e);
+    vxModal('error','Failed to load referral data.');
+  }
+});
+
+// ================== LOAD ==================
+async function loadAll(){
+  // referral stats
+  const statSnap = await getDoc(doc(db,'referralStats',ME.username));
+  const stats = statSnap.exists() ? statSnap.data() : {};
+
+  const l1 = stats.level1Referrals || [];
+  const l2 = stats.level2Referrals || [];
+  const l3 = stats.level3Referrals || [];
+
+  const l1Earn = +(stats.level1Earnings || 0);
+  const l2Earn = +(stats.level2Earnings || 0);
+  const l3Earn = +(stats.level3Earnings || 0);
+
+  // render tier counts
+  $('vxL1Count').textContent = l1.length;
+  $('vxL2Count').textContent = l2.length;
+  $('vxL3Count').textContent = l3.length;
+  $('vxL1Earn').textContent = fmtUSD(l1Earn);
+  $('vxL2Earn').textContent = fmtUSD(l2Earn);
+  $('vxL3Earn').textContent = fmtUSD(l3Earn);
+
+  const totalDownlines = l1.length + l2.length + l3.length;
+  const totalEarned = l1Earn + l2Earn + l3Earn;
+  $('vxTotalDownlines').textContent = totalDownlines;
+  $('vxTotalEarned').textContent = fmtUSD(totalEarned);
+  $('vxDlCount').textContent = `${totalDownlines} total`;
+
+  // fetch each downline's profile for details
+  const all = [
+    ...l1.map(u => ({ username:u, level:1 })),
+    ...l2.map(u => ({ username:u, level:2 })),
+    ...l3.map(u => ({ username:u, level:3 }))
+  ];
+
+  const downlineData = await Promise.all(all.map(async d => {
+    try{
+      const snap = await getDoc(doc(db,'users',d.username));
+      if(!snap.exists()) return { ...d, profile:null };
+      return { ...d, profile:snap.data() };
+    }catch{ return { ...d, profile:null }; }
+  }));
+
+  // sort: paid first, then by reg date desc
+  downlineData.sort((a,b)=>{
+    const aPaid = a.profile?.firstPurchaseDone ? 1 : 0;
+    const bPaid = b.profile?.firstPurchaseDone ? 1 : 0;
+    if(aPaid !== bPaid) return bPaid - aPaid;
+    const aT = a.profile?.createdAt?.toDate?.().getTime?.() || 0;
+    const bT = b.profile?.createdAt?.toDate?.().getTime?.() || 0;
+    return bT - aT;
+  });
+
+  renderDownlines(downlineData);
+}
+
+// ================== RENDER DOWNLINES ==================
+function renderDownlines(list){
+  const el = $('vxDownlines');
+  if(!list.length){
+    el.innerHTML = `<div class="vx-empty"><i class="ph ph-users-three"></i>No downlines yet. Share your invite code to start earning.</div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(d => {
+    const p = d.profile || {};
+    const regDate = fmtDate(p.createdAt);
+    const planName = p.activePlanName || (p.firstPurchaseDone ? 'Active' : 'No Plan');
+    const bonusEarned = p.firstPurchaseDone
+      ? +(p.firstPlanCostUSD || 0) * REF_RATES[d.level]
+      : 0;
+    const isPaid = !!p.firstPurchaseDone;
+
+    return `
+      <div class="vx-dl">
+        <div class="vx-dl-top">
+          <div class="vx-dl-name">
+            <span class="lvl l${d.level}">L${d.level}</span>
+            ${d.username}
+          </div>
+          <div class="vx-dl-status ${isPaid?'paid':'pending'}">${isPaid?'Paid':'Pending'}</div>
+        </div>
+        <div class="vx-dl-info">
+          <div>
+            <span class="ik">Registered</span>
+            <span class="iv">${regDate}</span>
+          </div>
+          <div>
+            <span class="ik">Package</span>
+            <span class="iv ${planName==='No Plan'?'pending':''}">${planName}</span>
+          </div>
+          <div>
+            <span class="ik">Your Bonus (${Math.round(REF_RATES[d.level]*100)}%)</span>
+            <span class="iv ${isPaid?'earn':'pending'}">${isPaid ? fmtUSD(bonusEarned) : 'Not yet'}</span>
+          </div>
+          <div>
+            <span class="ik">First Purchase</span>
+            <span class="iv ${isPaid?'earn':'pending'}">${isPaid ? 'Completed' : 'Pending'}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ================== COPY ==================
+$('vxCopyCode').addEventListener('click', async () => {
+  try{ await navigator.clipboard.writeText(ME.username); vxModal('success','Invite code copied!'); }
+  catch{ vxModal('error','Copy failed.'); }
+});
+$('vxCopyLink').addEventListener('click', async () => {
+  const link = `${location.origin}/index.html?ref=${ME.username}`;
+  try{ await navigator.clipboard.writeText(link); vxModal('success','Invite link copied!'); }
+  catch{ vxModal('error','Copy failed.'); }
+});
+
+// ================== NAV ==================
+document.querySelectorAll('.vx-nav button[data-href]').forEach(b => {
+  b.addEventListener('click', () => { window.location.href = b.dataset.href; });
+});
+</script>
+</body>
+</html>
