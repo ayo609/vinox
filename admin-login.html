@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vinox — Admin Login</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{min-height:100vh;overflow-x:hidden;display:flex;align-items:center;justify-content:center;padding:24px}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.14),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.08),transparent 60%),
+    #0B0716}
+
+.login-card{width:100%;max-width:380px;background:var(--vx-card);border:1px solid var(--vx-line-2);border-radius:16px;padding:34px 26px;animation:vxFadeUp .45s ease both}
+.brand{font-size:26px;font-weight:800;text-align:center;margin-bottom:4px;letter-spacing:-0.5px}
+.brand span{color:var(--vx-gold)}
+.sub{text-align:center;font-size:12px;color:var(--vx-muted);margin-bottom:26px;letter-spacing:0.3px;font-weight:500}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:10.5px;font-weight:700;color:var(--vx-muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;padding-left:2px}
+.field .input-wrap{position:relative}
+.field input{width:100%;height:48px;padding:0 44px 0 14px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;font-family:'Manrope';font-size:13.5px;font-weight:500;color:var(--vx-text);outline:none;transition:border-color .2s}
+.field input::placeholder{color:var(--vx-muted-2)}
+.field input:focus{border-color:var(--vx-violet);background:rgba(255,255,255,0.05)}
+.field .eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--vx-muted);cursor:pointer;padding:8px;font-size:1.1rem;border-radius:8px}
+.field .eye:hover{color:var(--vx-violet)}
+
+.btn{width:100%;height:48px;border:none;border-radius:10px;background:var(--vx-violet);color:#fff;font-family:'Manrope';font-size:13.5px;font-weight:800;cursor:pointer;transition:background .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover:not(:disabled){background:#9333EA}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:vxSpin .7s linear infinite;display:inline-block}
+
+.foot{text-align:center;margin-top:20px;font-size:11px;color:var(--vx-muted-2);font-weight:500;line-height:1.5}
+
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="brand">Vinox<span>.</span></div>
+  <div class="sub">ADMIN PANEL — RESTRICTED ACCESS</div>
+
+  <form id="adminLoginForm" autocomplete="off" novalidate>
+
+    <div class="field">
+      <label>Admin Email</label>
+      <input type="email" id="adminEmail" placeholder="admin@vinox.com" required autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap">
+        <input type="password" id="adminPassword" placeholder="Enter password" required autocomplete="current-password">
+        <button type="button" class="eye" id="togglePw" aria-label="Show password"><i class="ph ph-eye"></i></button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Admin Access Key</label>
+      <input type="password" id="adminKey" placeholder="Enter access key" required autocomplete="off">
+    </div>
+
+    <button type="submit" class="btn" id="loginBtn">
+      <span id="loginBtnText">Sign In</span>
+    </button>
+
+  </form>
+
+  <div class="foot">
+    Authorized personnel only.<br>
+    All access is logged and monitored.
+  </div>
+</div>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+
+// ⚠️ CHANGE THIS BEFORE GOING LIVE
+const ADMIN_ACCESS_KEY = "VINOX-ADMIN-2024";
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+// ================== EYE TOGGLE ==================
+$('togglePw').addEventListener('click', () => {
+  const inp = $('adminPassword'), ic = $('togglePw').querySelector('i');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  ic.className = show ? 'ph ph-eye-slash' : 'ph ph-eye';
+});
+
+// ================== LOGIN ==================
+let submitting = false;
+function setLoading(l){
+  submitting = l;
+  $('loginBtn').disabled = l;
+  $('loginBtnText').innerHTML = l
+    ? '<span class="spinner"></span> Verifying…'
+    : 'Sign In';
+}
+
+$('adminLoginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if(submitting) return;
+
+  const email = $('adminEmail').value.trim().toLowerCase();
+  const password = $('adminPassword').value;
+  const accessKey = $('adminKey').value.trim();
+
+  if(!email || !password || !accessKey)
+    return vxModal('warning','Fill in all fields.','Missing Info');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return vxModal('error','Enter a valid email address.');
+  if(accessKey !== ADMIN_ACCESS_KEY)
+    return vxModal('error','Invalid admin access key.','Access Denied');
+
+  setLoading(true);
+
+  try{
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const uid = cred.user.uid;
+
+    // Look up user profile — must have isAdmin: true
+    const uidSnap = await getDoc(doc(db,'usersByUid',uid));
+    if(!uidSnap.exists()){
+      await signOut(auth);
+      setLoading(false);
+      return vxModal('error','No profile found for this account.','Access Denied');
+    }
+
+    const username = uidSnap.data().username;
+    const userSnap = await getDoc(doc(db,'users',username));
+    if(!userSnap.exists()){
+      await signOut(auth);
+      setLoading(false);
+      return vxModal('error','Account data missing.','Access Denied');
+    }
+
+    const user = userSnap.data();
+    if(!user.isAdmin){
+      await signOut(auth);
+      setLoading(false);
+      return vxModal('error','This account is not an admin.','Access Denied');
+    }
+
+    // Save admin session
+    sessionStorage.setItem('adminLoggedIn','true');
+    sessionStorage.setItem('adminUsername', username);
+    sessionStorage.setItem('adminUid', uid);
+    sessionStorage.setItem('adminEmail', email);
+
+    vxModal('success', `Welcome, ${username}!`, 'Admin Access Granted');
+    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1200);
+
+  }catch(err){
+    setLoading(false);
+    console.error('Admin login error:', err);
+    const messages = {
+      'auth/invalid-credential':'Incorrect email or password.',
+      'auth/user-not-found':'No account found with that email.',
+      'auth/wrong-password':'Incorrect password.',
+      'auth/invalid-email':'That email address looks invalid.',
+      'auth/too-many-requests':'Too many attempts. Try again later.',
+      'auth/network-request-failed':'Network error. Check your connection.',
+      'permission-denied':'Could not load admin account.'
+    };
+    vxModal('error', messages[err.code] || 'Login failed. Please try again.');
+  }
+});
+</script>
+</body>
+</html>
