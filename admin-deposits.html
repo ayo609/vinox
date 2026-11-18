@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vinox — Admin Deposits</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{min-height:100vh;overflow-x:hidden;padding-bottom:80px}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+/* TOP BAR */
+.admin-topbar{position:sticky;top:0;z-index:100;background:rgba(11,7,22,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--vx-line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-brand{font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.topbar-brand span{color:var(--vx-gold)}
+.topbar-brand small{font-size:10px;color:var(--vx-muted);font-weight:700;letter-spacing:0.5px;margin-left:4px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.topbar-user{font-size:11px;color:var(--vx-muted);font-weight:600;padding:5px 10px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:6px;white-space:nowrap}
+.logout-btn{background:rgba(255,92,122,0.1);border:1px solid rgba(255,92,122,0.3);color:var(--vx-danger);padding:7px 12px;border-radius:7px;font-family:'Manrope';font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px}
+.logout-btn:hover{background:rgba(255,92,122,0.2)}
+.logout-btn i{font-size:13px}
+
+.admin-shell{max-width:1000px;margin:0 auto;padding:22px 18px}
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin:0 0 4px}
+.page-sub{font-size:12.5px;color:var(--vx-muted);margin:0 0 20px;font-weight:500}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:18px}
+.sum-card{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;padding:11px 13px}
+.sum-card .sk{font-size:9.5px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--vx-muted);margin-bottom:4px}
+.sum-card .sv{font-size:16px;font-weight:800}
+.sum-card .sv.green{color:var(--vx-green)}
+.sum-card .sv.gold{color:var(--vx-gold)}
+
+/* FILTERS */
+.filters{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px;margin-bottom:18px;display:flex;flex-direction:column;gap:10px}
+.search-wrap{position:relative}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--vx-muted);font-size:15px;pointer-events:none}
+.search-wrap input{width:100%;height:42px;padding:0 12px 0 36px;background:rgba(11,7,22,0.5);border:1px solid var(--vx-line);border-radius:9px;font-family:'Manrope';font-size:12.5px;color:var(--vx-text);outline:none;transition:border-color .2s}
+.search-wrap input::placeholder{color:var(--vx-muted-2)}
+.search-wrap input:focus{border-color:var(--vx-violet)}
+.filter-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.filter-row select{height:38px;padding:0 10px;background:rgba(11,7,22,0.5);border:1px solid var(--vx-line);border-radius:8px;font-family:'Manrope';font-size:11.5px;color:var(--vx-text);outline:none;cursor:pointer}
+.filter-row select:focus{border-color:var(--vx-violet)}
+
+/* DEPOSIT CARD */
+.dep-card{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px;margin-bottom:10px;animation:vxFadeUp .35s ease both;transition:border-color .2s}
+.dep-card:hover{border-color:var(--vx-line-2)}
+.dep-card.pending{border-left:3px solid var(--vx-gold)}
+.dep-card.approved{border-left:3px solid var(--vx-green)}
+.dep-card.rejected{border-left:3px solid var(--vx-danger);opacity:.8}
+
+.dc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.dc-user{display:flex;align-items:center;gap:9px}
+.dc-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--vx-violet),var(--vx-gold));display:grid;place-items:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.dc-uname{font-size:13px;font-weight:800;color:var(--vx-text);margin-bottom:1px}
+.dc-time{font-size:10.5px;color:var(--vx-muted);font-weight:500}
+.dc-amt{text-align:right}
+.dc-amt-main{font-size:17px;font-weight:800;color:var(--vx-green);line-height:1.2}
+.dc-amt-sub{font-size:10.5px;color:var(--vx-muted);font-weight:600;margin-top:2px}
+.dc-status{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:0.4px;text-transform:uppercase;align-self:flex-start}
+.dc-status.pending{background:rgba(245,200,107,0.16);color:var(--vx-gold)}
+.dc-status.approved{background:rgba(74,222,128,0.16);color:var(--vx-green)}
+.dc-status.rejected{background:rgba(255,92,122,0.16);color:var(--vx-danger)}
+
+/* METHOD TAG */
+.method-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:0.3px;text-transform:uppercase}
+.method-tag.usdt{background:rgba(38,161,123,0.14);color:#26A17B}
+.method-tag.bank{background:rgba(168,85,247,0.14);color:var(--vx-violet)}
+
+/* DETAIL GRID */
+.dc-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:11px}
+.dc-meta div{background:rgba(11,7,22,0.5);border-radius:6px;padding:6px 9px}
+.dc-meta .mk{font-size:8.5px;color:var(--vx-muted);font-weight:600;letter-spacing:0.3px;text-transform:uppercase;margin-bottom:1px}
+.dc-meta .mv{font-size:11.5px;font-weight:700;color:var(--vx-text);word-break:break-all;overflow:hidden;text-overflow:ellipsis}
+.dc-meta .full{grid-column:1/-1}
+.dc-meta .mv.mono{font-family:monospace;font-size:10px;letter-spacing:0.3px}
+
+/* PROOF PREVIEW */
+.proof-thumb{width:100%;height:140px;object-fit:cover;border-radius:8px;border:1px solid var(--vx-line);margin-bottom:10px;cursor:pointer;transition:opacity .2s}
+.proof-thumb:hover{opacity:.85}
+
+/* ACTIONS */
+.dc-actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn-sm{border:none;border-radius:7px;padding:7px 12px;font-family:'Manrope';font-size:10.5px;font-weight:800;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px;letter-spacing:0.2px}
+.btn-sm i{font-size:12px}
+.btn-view{background:rgba(168,85,247,0.14);color:var(--vx-violet);border:1px solid rgba(168,85,247,0.3)}
+.btn-view:hover{background:rgba(168,85,247,0.24)}
+.btn-approve{background:rgba(74,222,128,0.14);color:var(--vx-green);border:1px solid rgba(74,222,128,0.35)}
+.btn-approve:hover{background:rgba(74,222,128,0.24)}
+.btn-reject{background:rgba(255,92,122,0.1);color:var(--vx-danger);border:1px solid rgba(255,92,122,0.3)}
+.btn-reject:hover{background:rgba(255,92,122,0.2)}
+.btn-erase{background:rgba(154,143,184,0.1);color:var(--vx-muted);border:1px solid rgba(154,143,184,0.3)}
+.btn-erase:hover{background:rgba(255,92,122,0.14);color:var(--vx-danger);border-color:rgba(255,92,122,0.3)}
+
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:30px 16px;color:var(--vx-muted);font-size:12.5px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:12px}
+.empty i{font-size:34px;color:var(--vx-muted-2);display:block;margin-bottom:10px}
+.loading-wrap{text-align:center;padding:60px 20px;color:var(--vx-muted);font-size:13px}
+.loading-wrap .spinner{width:28px;height:28px;border:3px solid rgba(168,132,255,0.2);border-top-color:var(--vx-violet);border-radius:50%;animation:vxSpin .8s linear infinite;margin:0 auto 14px;display:block}
+
+/* BOTTOM NAV */
+.admin-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,7,22,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--vx-line);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.admin-nav-inner{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.admin-nav a{color:var(--vx-muted);text-decoration:none;font-family:'Manrope';font-size:10px;font-weight:700;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.3px;transition:color .2s;position:relative}
+.admin-nav a i{font-size:20px}
+.admin-nav a.active{color:var(--vx-violet)}
+
+/* MODAL LAYER */
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+/* IMAGE MODAL */
+.img-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
+.img-overlay.show{display:flex}
+.img-overlay img{max-width:100%;max-height:92vh;border-radius:10px;border:1px solid var(--vx-line-2)}
+.img-overlay .close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer;display:grid;place-items:center}
+.img-overlay .close:hover{background:rgba(255,255,255,0.2)}
+
+/* CONFIRM */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:#120B24;border:1px solid var(--vx-line-2);border-radius:14px;padding:22px;max-width:380px;width:100%;text-align:center;animation:vxFadeUp .25s ease both}
+.confirm-box .c-ico{width:52px;height:52px;border-radius:50%;background:rgba(255,92,122,0.14);display:grid;place-items:center;margin:0 auto 14px;font-size:24px;color:var(--vx-danger)}
+.confirm-box h3{margin:0 0 8px;font-size:15px;font-weight:800}
+.confirm-box p{margin:0 0 18px;font-size:12.5px;color:var(--vx-muted);line-height:1.6;white-space:pre-line}
+.confirm-box .c-btns{display:flex;gap:8px}
+.confirm-box button{flex:1;height:42px;border:none;border-radius:9px;font-family:'Manrope';font-size:12.5px;font-weight:800;cursor:pointer;transition:all .2s}
+.confirm-box .c-cancel{background:var(--vx-card);color:var(--vx-text);border:1px solid var(--vx-line)}
+.confirm-box .c-cancel:hover{background:var(--vx-card-2)}
+.confirm-box .c-confirm{background:var(--vx-danger);color:#fff}
+.confirm-box .c-confirm:hover{background:#E14963}
+.confirm-box .c-confirm.approve{background:var(--vx-green);color:#0A2D18}
+.confirm-box .c-confirm.approve:hover{background:#3FCB73}
+
+@media(max-width:640px){
+  .admin-shell{padding:16px 14px}
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+  .dc-top{flex-direction:column}
+  .dc-amt{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="admin-topbar">
+  <div class="topbar-brand">Vinox<span>.</span> <small>ADMIN</small></div>
+  <div class="topbar-actions">
+    <span class="topbar-user" id="adminUser">—</span>
+    <button class="logout-btn" id="logoutBtn"><i class="ph ph-sign-out"></i> Logout</button>
+  </div>
+</div>
+
+<div class="admin-shell">
+
+  <h1 class="page-title">Deposits</h1>
+  <p class="page-sub">Approve or reject user deposit requests. Approved deposits credit the USD equivalent to the user's wallet.</p>
+
+  <div class="summary-grid" id="summaryGrid">
+    <div class="sum-card"><div class="sk">Total Requests</div><div class="sv" id="sumTotal">0</div></div>
+    <div class="sum-card"><div class="sk">Pending</div><div class="sv gold" id="sumPending">0</div></div>
+    <div class="sum-card"><div class="sk">Approved</div><div class="sv green" id="sumApproved">0</div></div>
+    <div class="sum-card"><div class="sk">Total Approved</div><div class="sv green" id="sumApprovedUSD">$0.00</div></div>
+  </div>
+
+  <div class="filters">
+    <div class="search-wrap">
+      <i class="ph ph-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search by username…">
+    </div>
+    <div class="filter-row">
+      <select id="filterStatus">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <select id="filterMethod">
+        <option value="all">All Methods</option>
+        <option value="usdt">USDT (BEP20)</option>
+        <option value="bank">Bank Transfer (₦)</option>
+      </select>
+      <select id="sortBy">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="amount">Highest Amount</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="depositsList"><div class="loading-wrap"><span class="spinner"></span>Loading deposits…</div></div>
+
+</div>
+
+<nav class="admin-nav">
+  <div class="admin-nav-inner">
+    <a href="admin-dashboard.html"><i class="ph ph-chart-pie"></i>Overview</a>
+    <a href="admin-users.html"><i class="ph ph-users"></i>Users</a>
+    <a href="admin-deposits.html" class="active"><i class="ph ph-arrow-down"></i>Deposits</a>
+    <a href="admin-withdrawals.html"><i class="ph ph-arrow-up"></i>Withdrawals</a>
+  </div>
+</nav>
+
+<!-- IMAGE MODAL -->
+<div class="img-overlay" id="imgOverlay">
+  <button class="close" id="imgClose"><i class="ph ph-x"></i></button>
+  <img id="imgPreview" alt="Proof">
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="c-ico" id="confirmIcon"><i class="ph ph-warning"></i></div>
+    <h3 id="confirmTitle">Confirm</h3>
+    <p id="confirmMsg">Are you sure?</p>
+    <div class="c-btns">
+      <button class="c-cancel" id="confirmCancel">Cancel</button>
+      <button class="c-confirm" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, collection, doc, getDoc, getDocs, updateDoc, deleteDoc,
+  runTransaction, increment, arrayUnion, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+let ADMIN = null;
+let allDeposits = [];
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+// ================== FORMAT ==================
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtNGN(v){ return '₦' + Math.round(+v||0).toLocaleString(); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+// ================== CONFIRM ==================
+let confirmResolve = null;
+function askConfirm(title, msg, variant='danger'){
+  return new Promise(resolve => {
+    $('confirmTitle').textContent = title;
+    $('confirmMsg').textContent = msg;
+    const btn = $('confirmOk');
+    btn.className = 'c-confirm' + (variant === 'approve' ? ' approve' : '');
+    $('confirmOverlay').classList.add('show');
+    confirmResolve = resolve;
+  });
+}
+$('confirmCancel').addEventListener('click', () => {
+  $('confirmOverlay').classList.remove('show');
+  if(confirmResolve){ confirmResolve(false); confirmResolve = null; }
+});
+$('confirmOk').addEventListener('click', () => {
+  $('confirmOverlay').classList.remove('show');
+  if(confirmResolve){ confirmResolve(true); confirmResolve = null; }
+});
+
+// ================== AUTH ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'admin-login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){ window.location.href = 'admin-login.html'; return; }
+    const username = uidSnap.data().username;
+    const pSnap = await getDoc(doc(db,'users',username));
+    if(!pSnap.exists() || !pSnap.data().isAdmin){
+      await signOut(auth);
+      window.location.href = 'admin-login.html';
+      return;
+    }
+    ADMIN = { uid: user.uid, username };
+    $('adminUser').textContent = '👤 ' + username;
+    await loadDeposits();
+  }catch(e){
+    console.error(e);
+    window.location.href = 'admin-login.html';
+  }
+});
+
+// ================== LOAD ==================
+async function loadDeposits(){
+  try{
+    const snap = await getDocs(collection(db,'depositRequests'));
+    allDeposits = [];
+    snap.forEach(d => allDeposits.push({ id:d.id, ...d.data() }));
+    renderSummary();
+    renderDeposits();
+  }catch(e){
+    console.error('loadDeposits:', e);
+    $('depositsList').innerHTML = `<div class="empty"><i class="ph ph-warning"></i>Failed to load deposits.</div>`;
+  }
+}
+
+function renderSummary(){
+  const total = allDeposits.length;
+  const pending = allDeposits.filter(d => d.status === 'pending').length;
+  const approved = allDeposits.filter(d => d.status === 'approved').length;
+  const totalUSD = allDeposits
+    .filter(d => d.status === 'approved')
+    .reduce((s,d) => s + (+d.amountUSD||0), 0);
+
+  $('sumTotal').textContent = total;
+  $('sumPending').textContent = pending;
+  $('sumApproved').textContent = approved;
+  $('sumApprovedUSD').textContent = fmtUSD(totalUSD);
+}
+
+// ================== RENDER ==================
+function renderDeposits(){
+  const q = ($('searchInput').value || '').toLowerCase().trim();
+  const status = $('filterStatus').value;
+  const method = $('filterMethod').value;
+  const sort = $('sortBy').value;
+
+  let filtered = allDeposits.filter(d => {
+    if(q && !(d.username||'').toLowerCase().includes(q)) return false;
+    if(status !== 'all' && d.status !== status) return false;
+    if(method !== 'all' && d.method !== method) return false;
+    return true;
+  });
+
+  filtered.sort((a,b) => {
+    if(sort === 'newest' || sort === 'oldest'){
+      const aT = a.createdAt?.toDate?.().getTime?.() || new Date(a.createdAtISO||0).getTime();
+      const bT = b.createdAt?.toDate?.().getTime?.() || new Date(b.createdAtISO||0).getTime();
+      return sort === 'newest' ? bT - aT : aT - bT;
+    }
+    return (+b.amountUSD||0) - (+a.amountUSD||0);
+  });
+
+  const el = $('depositsList');
+  if(!filtered.length){
+    el.innerHTML = `<div class="empty"><i class="ph ph-arrow-down"></i>No deposit requests found.</div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(d => {
+    const isUSDT = d.method === 'usdt';
+    const isPending = d.status === 'pending';
+
+    return `
+      <div class="dep-card ${d.status}">
+        <div class="dc-top">
+          <div class="dc-user">
+            <div class="dc-avatar">${(d.username||'?')[0].toUpperCase()}</div>
+            <div>
+              <div class="dc-uname">${d.username || '—'}</div>
+              <div class="dc-time">${fmtDate(d.createdAt || d.createdAtISO)}</div>
+            </div>
+          </div>
+          <div class="dc-amt">
+            <div class="dc-amt-main">${fmtUSD(d.amountUSD||0)}</div>
+            <div class="dc-amt-sub">${isUSDT ? '≈ ' + (+d.amountUSDT||0).toFixed(2) + ' USDT' : '≈ ' + fmtNGN(d.amountNGN)}</div>
+          </div>
+          <div class="dc-status ${d.status}">${d.status}</div>
+        </div>
+
+        <div style="margin-bottom:11px">
+          <span class="method-tag ${isUSDT?'usdt':'bank'}">
+            <i class="ph ${isUSDT?'ph-currency-btc':'ph-bank'}"></i>
+            ${isUSDT ? 'USDT · BEP20' : 'Bank Transfer · ₦'}
+          </span>
+        </div>
+
+        <div class="dc-meta">
+          <div><div class="mk">User</div><div class="mv">${d.username || '—'}</div></div>
+          <div><div class="mk">Credits To</div><div class="mv" style="color:var(--vx-green)">${fmtUSD(d.amountUSD||0)}</div></div>
+
+          ${isUSDT ? `
+            <div><div class="mk">USDT Amount</div><div class="mv">${(+d.amountUSDT||0).toFixed(2)} USDT</div></div>
+            <div><div class="mk">Network</div><div class="mv">${d.network || 'BEP20'}</div></div>
+            ${d.txId ? `<div class="full"><div class="mk">TX Hash</div><div class="mv mono">${d.txId}</div></div>` : ''}
+          ` : `
+            <div><div class="mk">₦ Amount</div><div class="mv">${fmtNGN(d.amountNGN)}</div></div>
+            <div><div class="mk">Rate</div><div class="mv">₦${(d.rate||1500).toLocaleString()}/$</div></div>
+            ${d.senderName ? `<div class="full"><div class="mk">Sender Name</div><div class="mv">${d.senderName}</div></div>` : ''}
+          `}
+
+          ${d.approvedBy ? `<div class="full"><div class="mk">Approved By</div><div class="mv">${d.approvedBy} · ${fmtDate(d.approvedAt)}</div></div>` : ''}
+          ${d.rejectedBy ? `<div class="full"><div class="mk">Rejected By</div><div class="mv">${d.rejectedBy} · ${fmtDate(d.rejectedAt)}</div></div>` : ''}
+        </div>
+
+        ${isUSDT && d.screenshot ? `<img class="proof-thumb" src="${d.screenshot}" alt="Proof" data-img="${d.id}">` : ''}
+
+        <div class="dc-actions">
+          ${isUSDT && d.screenshot ? `<button class="btn-sm btn-view" data-img-btn="${d.id}"><i class="ph ph-image"></i> View Proof</button>` : ''}
+          ${isPending ? `
+            <button class="btn-sm btn-approve" data-approve="${d.id}"><i class="ph ph-check"></i> Approve & Credit</button>
+            <button class="btn-sm btn-reject" data-reject="${d.id}"><i class="ph ph-x"></i> Reject</button>
+          ` : ''}
+          <button class="btn-sm btn-erase" data-erase="${d.id}"><i class="ph ph-trash"></i> Erase</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Wire actions
+  el.querySelectorAll('[data-img]').forEach(img => {
+    img.addEventListener('click', () => showImage(img.dataset.img));
+  });
+  el.querySelectorAll('[data-img-btn]').forEach(b => {
+    b.addEventListener('click', () => showImage(b.dataset.imgBtn));
+  });
+  el.querySelectorAll('[data-approve]').forEach(b => {
+    b.addEventListener('click', () => approveDeposit(b.dataset.approve));
+  });
+  el.querySelectorAll('[data-reject]').forEach(b => {
+    b.addEventListener('click', () => rejectDeposit(b.dataset.reject));
+  });
+  el.querySelectorAll('[data-erase]').forEach(b => {
+    b.addEventListener('click', () => eraseDeposit(b.dataset.erase));
+  });
+}
+
+// ================== IMAGE MODAL ==================
+function showImage(id){
+  const d = allDeposits.find(x => x.id === id);
+  if(!d?.screenshot) return;
+  $('imgPreview').src = d.screenshot;
+  $('imgOverlay').classList.add('show');
+}
+$('imgClose').addEventListener('click', () => {
+  $('imgOverlay').classList.remove('show');
+  $('imgPreview').src = '';
+});
+$('imgOverlay').addEventListener('click', (e) => {
+  if(e.target === $('imgOverlay')){
+    $('imgOverlay').classList.remove('show');
+    $('imgPreview').src = '';
+  }
+});
+
+// ================== APPROVE ==================
+async function approveDeposit(id){
+  const d = allDeposits.find(x => x.id === id);
+  if(!d || d.status !== 'pending') return;
+
+  const creditUSD = +(d.amountUSD || 0);
+  const detail = d.method === 'usdt'
+    ? `${d.amountUSDT} USDT (BEP20)`
+    : `${fmtNGN(d.amountNGN)} @ ₦${(d.rate||1500).toLocaleString()}/$`;
+
+  const ok = await askConfirm(
+    'Approve & Credit Deposit?',
+    `Credit ${fmtUSD(creditUSD)} to ${d.username}'s deposit wallet?\n\nMethod: ${detail}\n\nThis action cannot be undone.`,
+    'approve'
+  );
+  if(!ok) return;
+
+  try{
+    await runTransaction(db, async (tx) => {
+      const reqRef = doc(db,'depositRequests',id);
+      const reqDoc = await tx.get(reqRef);
+      if(!reqDoc.exists()) throw new Error('no-req');
+      if(reqDoc.data().status !== 'pending') throw new Error('not-pending');
+
+      const userRef = doc(db,'users',d.username);
+      const userDoc = await tx.get(userRef);
+      if(!userDoc.exists()) throw new Error('no-user');
+
+      tx.update(reqRef, {
+        status: 'approved',
+        approvedAt: serverTimestamp(),
+        approvedBy: ADMIN.username,
+        creditedUSD: creditUSD
+      });
+
+      tx.update(userRef, {
+        depositWallet: increment(creditUSD),
+        totalDeposited: increment(creditUSD)
+      });
+
+      const txRef = doc(db,'transactionHistory',d.username);
+      const txDoc = await tx.get(txRef);
+      const entry = {
+        type:'deposit',
+        title:`Deposit Approved — ${d.method === 'usdt' ? 'USDT' : 'Bank'}`,
+        amount: creditUSD,
+        currency:'USD',
+        createdAt: new Date().toISOString()
+      };
+      if(txDoc.exists()){
+        tx.update(txRef, { transactions: arrayUnion(entry) });
+      } else {
+        tx.set(txRef, { username: d.username, transactions:[entry], createdAt: new Date().toISOString() });
+      }
+    });
+
+    vxModal('success', `${fmtUSD(creditUSD)} credited to ${d.username}.`, 'Deposit Approved');
+    await loadDeposits();
+  }catch(e){
+    console.error('approveDeposit:', e);
+    vxModal('error', 'Could not approve. ' + (e.message || 'Try again.'));
+  }
+}
+
+// ================== REJECT ==================
+async function rejectDeposit(id){
+  const d = allDeposits.find(x => x.id === id);
+  if(!d || d.status !== 'pending') return;
+
+  const ok = await askConfirm(
+    'Reject Deposit?',
+    `Reject ${d.username}'s deposit of ${fmtUSD(d.amountUSD||0)}?\n\nNo credit will be added to their wallet.`
+  );
+  if(!ok) return;
+
+  try{
+    await updateDoc(doc(db,'depositRequests',id), {
+      status: 'rejected',
+      rejectedAt: serverTimestamp(),
+      rejectedBy: ADMIN.username
+    });
+    vxModal('success', 'Deposit rejected.', 'Rejected');
+    await loadDeposits();
+  }catch(e){
+    console.error(e);
+    vxModal('error', 'Could not reject.');
+  }
+}
+
+// ================== ERASE ==================
+async function eraseDeposit(id){
+  const d = allDeposits.find(x => x.id === id);
+  if(!d) return;
+
+  const warn = d.status === 'approved'
+    ? `\n\n⚠️ This was already approved and the user was credited ${fmtUSD(d.amountUSD||0)}. Erasing will NOT reverse the credit.`
+    : '';
+
+  const ok = await askConfirm(
+    'Erase Deposit Record?',
+    `Permanently delete this deposit request from ${d.username}?${warn}\n\nThis cannot be undone.`
+  );
+  if(!ok) return;
+
+  try{
+    await deleteDoc(doc(db,'depositRequests',id));
+    vxModal('success', 'Deposit record erased.', 'Deleted');
+    await loadDeposits();
+  }catch(e){
+    console.error(e);
+    vxModal('error', 'Could not erase.');
+  }
+}
+
+// ================== FILTERS ==================
+$('searchInput').addEventListener('input', renderDeposits);
+$('filterStatus').addEventListener('change', renderDeposits);
+$('filterMethod').addEventListener('change', renderDeposits);
+$('sortBy').addEventListener('change', renderDeposits);
+
+// ================== LOGOUT ==================
+$('logoutBtn').addEventListener('click', async () => {
+  await signOut(auth);
+  sessionStorage.clear();
+  window.location.href = 'admin-login.html';
+});
+</script>
+</body>
+</html>
