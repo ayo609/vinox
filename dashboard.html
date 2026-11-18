@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Vinox — Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;padding-bottom:76px}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes vxMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes vxPulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+.vx-marquee{width:100%;background:linear-gradient(90deg,rgba(168,85,247,0.18),rgba(245,200,107,0.12));border-bottom:1px solid var(--vx-line);padding:8px 0;overflow:hidden;position:relative;z-index:40;white-space:nowrap}
+.vx-marquee-track{display:inline-flex;gap:44px;animation:vxMarquee 22s linear infinite;padding-left:20px;will-change:transform}
+.vx-marquee-item{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--vx-text);letter-spacing:0.3px}
+.vx-marquee-item i{font-size:14px;color:var(--vx-gold)}
+
+.vx-shell{width:100%;max-width:460px;margin:0 auto;flex:1;padding:20px 18px 20px}
+
+.vx-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.vx-brand{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.vx-brand span{color:var(--vx-gold)}
+
+.vx-balance{background:linear-gradient(135deg,rgba(168,85,247,0.14),rgba(245,200,107,0.06));border:1px solid var(--vx-line-2);border-radius:14px;padding:18px;margin-bottom:14px;animation:vxFadeUp .5s ease both}
+.vx-balance .lbl{font-size:11px;color:var(--vx-muted);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px}
+.vx-balance .amt{font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:14px}
+.vx-wallets{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vx-wallet{background:rgba(11,7,22,0.5);border:1px solid var(--vx-line);border-radius:10px;padding:11px 13px}
+.vx-wallet .wl{font-size:10px;color:var(--vx-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.vx-wallet .wl i{font-size:12px}
+.vx-wallet .wv{font-size:16px;font-weight:800}
+.vx-wallet.dep .wl i{color:var(--vx-violet)}
+.vx-wallet.wit .wl i{color:var(--vx-green)}
+
+.vx-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
+.vx-quick button{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;padding:12px 8px;color:var(--vx-text);font-family:'Manrope';font-size:12px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s}
+.vx-quick button:hover{background:var(--vx-card-2);border-color:var(--vx-line-2)}
+.vx-quick button i{font-size:20px;color:var(--vx-violet)}
+.vx-quick button:nth-child(2) i{color:var(--vx-green)}
+.vx-quick button:nth-child(3) i{color:var(--vx-gold)}
+
+.vx-sec-h{font-size:13px;font-weight:800;letter-spacing:0.3px;color:var(--vx-text);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between}
+.vx-sec-h small{font-size:11px;color:var(--vx-muted);font-weight:600}
+
+.vx-bonus{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:13px 14px;margin-bottom:22px;display:flex;align-items:center;gap:11px;font-size:12.5px;color:var(--vx-muted);font-weight:500}
+.vx-bonus i.bonus-ic{font-size:20px;flex-shrink:0;color:var(--vx-gold)}
+.vx-bonus .b-txt{flex:1;min-width:0;line-height:1.45}
+.vx-bonus .b-txt strong{color:var(--vx-text);font-weight:800}
+.vx-bonus.active{border-color:rgba(245,200,107,0.32);background:rgba(245,200,107,0.06)}
+.vx-bonus.active i.bonus-ic{color:var(--vx-gold)}
+.vx-bonus.locked i.bonus-ic{color:var(--vx-muted-2)}
+.vx-bonus.claimed{border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.06)}
+.vx-bonus.claimed i.bonus-ic{color:var(--vx-green)}
+
+.vx-claim-btn{flex-shrink:0;background:var(--vx-gold);color:#2A1C00;border:none;border-radius:8px;padding:8px 14px;font-family:'Manrope';font-size:11.5px;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:0.3px}
+.vx-claim-btn:hover:not(:disabled){background:#F7D89A}
+.vx-claim-btn:disabled{opacity:.55;cursor:not-allowed}
+.vx-claim-btn.done{background:rgba(74,222,128,0.16);color:var(--vx-green);cursor:default}
+
+.vx-plans{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.vx-plan{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px;transition:all .2s;animation:vxFadeUp .5s ease both;position:relative}
+.vx-plan:hover{border-color:var(--vx-line-2);background:var(--vx-card-2)}
+.vx-plan.soon{opacity:.75}
+.vx-plan.soon:hover{border-color:var(--vx-line);background:var(--vx-card)}
+.vx-plan-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.vx-plan-name{font-size:13px;font-weight:800;letter-spacing:0.3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vx-soon-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;background:rgba(245,200,107,0.16);color:var(--vx-gold);letter-spacing:0.5px;text-transform:uppercase}
+.vx-plan-cost{font-size:13px;font-weight:800;color:var(--vx-gold);padding:4px 10px;background:rgba(245,200,107,0.1);border-radius:6px;border:1px solid rgba(245,200,107,0.25)}
+.vx-plan-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.vx-plan-stats div{background:rgba(11,7,22,0.5);border-radius:7px;padding:7px 8px;text-align:center}
+.vx-plan-stats div span{display:block;font-size:9px;color:var(--vx-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:2px}
+.vx-plan-stats div strong{font-size:12.5px;font-weight:800;color:var(--vx-text)}
+.vx-plan-buy{width:100%;height:38px;border:none;border-radius:9px;background:var(--vx-violet);color:#fff;font-family:'Manrope';font-size:12.5px;font-weight:800;cursor:pointer;transition:background .2s}
+.vx-plan-buy:hover{background:#9333EA}
+.vx-plan-buy.disabled{background:rgba(154,143,184,0.14);color:var(--vx-muted);cursor:not-allowed}
+.vx-plan-buy.disabled:hover{background:rgba(154,143,184,0.14)}
+
+/* INVESTMENT CARD + COUNTDOWN */
+.vx-inv{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px;margin-bottom:10px}
+.vx-inv-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.vx-inv-name{font-size:12.5px;font-weight:800}
+.vx-inv-status{font-size:10px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:0.5px;text-transform:uppercase}
+.vx-inv-status.active{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.vx-inv-status.completed{background:rgba(154,143,184,0.14);color:var(--vx-muted)}
+.vx-inv-progress{height:6px;background:rgba(11,7,22,0.7);border-radius:4px;overflow:hidden;margin-bottom:7px}
+.vx-inv-progress div{height:100%;background:linear-gradient(90deg,var(--vx-violet),var(--vx-gold));border-radius:4px;transition:width .4s}
+.vx-inv-info{display:flex;justify-content:space-between;font-size:11px;color:var(--vx-muted);font-weight:500;gap:8px;flex-wrap:wrap}
+.vx-inv-info strong{color:var(--vx-text);font-weight:700}
+
+/* countdown block */
+.vx-inv-countdown{margin-top:9px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.22);border-radius:9px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vx-inv-countdown .cd-l{display:flex;align-items:center;gap:7px}
+.vx-inv-countdown .cd-l i{font-size:14px;color:var(--vx-violet);animation:vxPulse 2s ease-in-out infinite}
+.vx-inv-countdown .cd-l span{font-size:10.5px;font-weight:700;color:var(--vx-muted);letter-spacing:0.3px;text-transform:uppercase}
+.vx-inv-countdown .cd-time{font-family:'Manrope';font-size:13px;font-weight:800;color:var(--vx-gold);letter-spacing:0.5px;font-variant-numeric:tabular-nums}
+
+.vx-empty{text-align:center;padding:24px 16px;color:var(--vx-muted);font-size:12.5px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:12px}
+.vx-empty i{font-size:32px;color:var(--vx-muted-2);display:block;margin-bottom:8px}
+
+.vx-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,7,22,0.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--vx-line);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.vx-nav-inner{max-width:460px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.vx-nav button{background:none;border:none;color:var(--vx-muted);font-family:'Manrope';font-size:10px;font-weight:700;cursor:pointer;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.3px;transition:color .2s}
+.vx-nav button i{font-size:20px}
+.vx-nav button.active{color:var(--vx-violet)}
+
+.vx-page{display:none;animation:vxFadeUp .35s ease both}
+.vx-page.active{display:block}
+
+.vx-invite-card{background:linear-gradient(135deg,rgba(168,85,247,0.14),rgba(245,200,107,0.06));border:1px solid var(--vx-line-2);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center}
+.vx-invite-card .ic-lbl{font-size:10.5px;color:var(--vx-muted);letter-spacing:0.6px;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.vx-invite-card .ic-code{font-size:22px;font-weight:800;letter-spacing:2px;color:var(--vx-gold);margin-bottom:12px}
+.vx-invite-card button{background:var(--vx-violet);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Manrope';font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;margin:0 3px}
+.vx-invite-card button:hover{background:#9333EA}
+.vx-invite-card button.alt{background:rgba(245,200,107,0.14);color:var(--vx-gold);border:1px solid rgba(245,200,107,0.3)}
+.vx-invite-card button.alt:hover{background:rgba(245,200,107,0.22)}
+
+.vx-tier{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:13px;margin-bottom:10px}
+.vx-tier-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.vx-tier-lbl{font-size:12px;font-weight:800}
+.vx-tier-pct{font-size:11px;font-weight:800;color:var(--vx-gold);background:rgba(245,200,107,0.12);padding:3px 8px;border-radius:5px}
+.vx-tier-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vx-tier-stats div{background:rgba(11,7,22,0.5);border-radius:7px;padding:7px 9px}
+.vx-tier-stats span{display:block;font-size:9px;color:var(--vx-muted);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:2px}
+.vx-tier-stats strong{font-size:13px;font-weight:800}
+
+.vx-ref-list{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.vx-ref-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(168,132,255,0.08);font-size:12px}
+.vx-ref-item:last-child{border-bottom:none}
+.vx-ref-item strong{font-weight:700;color:var(--vx-text)}
+.vx-ref-item .lvl{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;background:rgba(168,85,247,0.14);color:var(--vx-violet);margin-right:6px}
+.vx-ref-item .lvl.l2{background:rgba(245,200,107,0.14);color:var(--vx-gold)}
+.vx-ref-item .lvl.l3{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+
+.vx-tx{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:11px}
+.vx-tx-icon{width:34px;height:34px;flex-shrink:0;border-radius:9px;display:grid;place-items:center;font-size:16px}
+.vx-tx-icon.deposit{background:rgba(168,85,247,0.14);color:var(--vx-violet)}
+.vx-tx-icon.withdraw{background:rgba(245,200,107,0.14);color:var(--vx-gold)}
+.vx-tx-icon.roi{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.vx-tx-icon.ref{background:rgba(245,200,107,0.14);color:var(--vx-gold)}
+.vx-tx-icon.bonus{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.vx-tx-icon.invest{background:rgba(168,85,247,0.14);color:var(--vx-violet)}
+.vx-tx-body{flex:1;min-width:0}
+.vx-tx-title{font-size:12.5px;font-weight:700;color:var(--vx-text);margin-bottom:2px}
+.vx-tx-date{font-size:10.5px;color:var(--vx-muted);font-weight:500}
+.vx-tx-amt{font-size:13px;font-weight:800;white-space:nowrap}
+.vx-tx-amt.credit{color:var(--vx-green)}
+.vx-tx-amt.debit{color:var(--vx-danger)}
+
+.vx-profile-head{text-align:center;padding:16px 0 22px;animation:vxFadeUp .5s ease both}
+.vx-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--vx-violet),var(--vx-gold));display:grid;place-items:center;margin:0 auto 10px;font-size:26px;font-weight:800;color:#fff;letter-spacing:-1px}
+.vx-profile-head h2{font-size:18px;font-weight:800;margin:0 0 3px}
+.vx-profile-head p{font-size:12px;color:var(--vx-muted);margin:0}
+.vx-profile-row{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.vx-profile-row .k{color:var(--vx-muted);font-weight:500}
+.vx-profile-row .v{font-weight:700;color:var(--vx-text);text-align:right;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vx-logout{width:100%;height:46px;margin-top:16px;border:1px solid rgba(255,92,122,0.3);background:rgba(255,92,122,0.08);color:var(--vx-danger);border-radius:10px;font-family:'Manrope';font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.vx-logout:hover{background:rgba(255,92,122,0.15)}
+
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+.vx-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:9998;display:none;align-items:flex-end;justify-content:center;padding:0}
+.vx-overlay.show{display:flex}
+.vx-sheet{background:#120B24;border-top:1px solid var(--vx-line-2);border-radius:16px 16px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));width:100%;max-width:460px;max-height:85vh;overflow-y:auto;animation:vxSheetUp .3s ease both;position:relative}
+@keyframes vxSheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.vx-sheet h3{margin:0 0 4px;font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.vx-sheet .sh-sub{font-size:12px;color:var(--vx-muted);margin:0 0 18px}
+.vx-sheet-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--vx-muted);font-size:20px;cursor:pointer}
+.vx-sheet-info{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:13px 14px;margin-bottom:14px}
+.vx-sheet-info .row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px}
+.vx-sheet-info .row:last-child{margin-bottom:0}
+.vx-sheet-info .row .k{color:var(--vx-muted);font-weight:500}
+.vx-sheet-info .row .v{font-weight:800;color:var(--vx-text)}
+.vx-sheet-btn{width:100%;height:48px;background:var(--vx-violet);color:#fff;border:none;border-radius:10px;font-family:'Manrope';font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.vx-sheet-btn:hover:not(:disabled){background:#9333EA}
+.vx-sheet-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Social popout */
+.vx-social-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);z-index:9997;display:none;align-items:center;justify-content:center;padding:20px}
+.vx-social-overlay.show{display:flex}
+.vx-social-modal{background:#120B24;border:1px solid var(--vx-line-2);border-radius:16px;padding:24px 20px;width:100%;max-width:340px;text-align:center;animation:vxSocialIn .3s ease both;position:relative}
+@keyframes vxSocialIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+.vx-social-modal .sm-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--vx-muted);font-size:20px;cursor:pointer;padding:4px}
+.vx-social-modal .sm-ico{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--vx-violet),var(--vx-gold));display:grid;place-items:center;margin:0 auto 14px;font-size:26px;color:#fff}
+.vx-social-modal h3{font-size:16px;font-weight:800;margin:0 0 6px;letter-spacing:-0.3px}
+.vx-social-modal p{font-size:12px;color:var(--vx-muted);line-height:1.55;margin:0 0 18px}
+.vx-social-btns{display:flex;flex-direction:column;gap:9px}
+.vx-social-btns a{display:flex;align-items:center;justify-content:center;gap:9px;height:46px;border-radius:10px;text-decoration:none;font-family:'Manrope';font-size:13px;font-weight:800;transition:all .2s;letter-spacing:0.2px}
+.vx-social-btns a i{font-size:18px}
+.vx-social-btns .tg{background:#229ED9;color:#fff}
+.vx-social-btns .tg:hover{background:#1a7fb0}
+.vx-social-btns .wa{background:#25D366;color:#fff}
+.vx-social-btns .wa:hover{background:#1da851}
+.vx-social-modal .sm-later{margin-top:14px;font-size:11.5px;color:var(--vx-muted-2);background:none;border:none;cursor:pointer;font-family:'Manrope';font-weight:600}
+.vx-social-modal .sm-later:hover{color:var(--vx-text)}
+
+@media(max-width:380px){
+  .vx-balance .amt{font-size:24px}
+  .vx-shell{padding:16px 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- MARQUEE -->
+<div class="vx-marquee">
+  <div class="vx-marquee-track" id="vxMarqueeTrack">
+    <span class="vx-marquee-item"><i class="ph ph-megaphone"></i> Welcome to Vinox — Start earning daily ROI today!</span>
+    <span class="vx-marquee-item"><i class="ph ph-gift"></i> Daily bonus $0.01 with any active plan</span>
+    <span class="vx-marquee-item"><i class="ph ph-users-three"></i> Refer friends and earn up to 15% commission</span>
+    <span class="vx-marquee-item"><i class="ph ph-rocket"></i> New plans now available — Vinox 1 to Vinox 6</span>
+    <span class="vx-marquee-item"><i class="ph ph-shield-check"></i> All withdrawals processed after admin approval</span>
+    <span class="vx-marquee-item"><i class="ph ph-clock"></i> ROI credits daily at 1 AM (no Sundays)</span>
+  </div>
+</div>
+
+<main class="vx-shell">
+
+  <div class="vx-top">
+    <div class="vx-brand">Vinox<span>.</span></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section class="vx-page active" id="page-dashboard">
+    <div class="vx-balance">
+      <div class="lbl">Total Balance</div>
+      <div class="amt" id="vxTotal">$0.00</div>
+      <div class="vx-wallets">
+        <div class="vx-wallet dep">
+          <div class="wl"><i class="ph ph-wallet"></i> Deposit</div>
+          <div class="wv" id="vxDep">$0.00</div>
+        </div>
+        <div class="vx-wallet wit">
+          <div class="wl"><i class="ph ph-bank"></i> Withdrawal</div>
+          <div class="wv" id="vxWit">$0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vx-quick">
+      <button id="qaDeposit"><i class="ph ph-arrow-down"></i> Deposit</button>
+      <button id="qaWithdraw"><i class="ph ph-arrow-up"></i> Withdraw</button>
+      <button id="qaInvest"><i class="ph ph-chart-line-up"></i> Invest</button>
+    </div>
+
+    <div class="vx-bonus" id="vxBonus">
+      <i class="ph ph-gift bonus-ic"></i>
+      <div class="b-txt">Loading…</div>
+    </div>
+
+    <div class="vx-sec-h">Active Investments <small id="vxInvCount">0</small></div>
+    <div id="vxActiveList"></div>
+
+    <div class="vx-sec-h" style="margin-top:22px">Investment Plans</div>
+    <div class="vx-plans" id="vxPlans"></div>
+  </section>
+
+  <!-- REFERRAL -->
+  <section class="vx-page" id="page-referral">
+    <div class="vx-sec-h" style="margin-bottom:14px">Referral Program</div>
+
+    <div class="vx-invite-card">
+      <div class="ic-lbl">Your Invite Code</div>
+      <div class="ic-code" id="vxInviteCode">—</div>
+      <button id="vxCopyCode"><i class="ph ph-copy"></i> Copy Code</button>
+      <button id="vxCopyLink" class="alt"><i class="ph ph-link"></i> Copy Link</button>
+    </div>
+
+    <div class="vx-tier">
+      <div class="vx-tier-top">
+        <div class="vx-tier-lbl">Level 1 · Direct</div>
+        <div class="vx-tier-pct">15%</div>
+      </div>
+      <div class="vx-tier-stats">
+        <div><span>Referrals</span><strong id="vxL1Count">0</strong></div>
+        <div><span>Earnings</span><strong id="vxL1Earn">$0.00</strong></div>
+      </div>
+    </div>
+
+    <div class="vx-tier">
+      <div class="vx-tier-top">
+        <div class="vx-tier-lbl">Level 2 · Indirect</div>
+        <div class="vx-tier-pct">3%</div>
+      </div>
+      <div class="vx-tier-stats">
+        <div><span>Referrals</span><strong id="vxL2Count">0</strong></div>
+        <div><span>Earnings</span><strong id="vxL2Earn">$0.00</strong></div>
+      </div>
+    </div>
+
+    <div class="vx-tier">
+      <div class="vx-tier-top">
+        <div class="vx-tier-lbl">Level 3 · Extended</div>
+        <div class="vx-tier-pct">1%</div>
+      </div>
+      <div class="vx-tier-stats">
+        <div><span>Referrals</span><strong id="vxL3Count">0</strong></div>
+        <div><span>Earnings</span><strong id="vxL3Earn">$0.00</strong></div>
+      </div>
+    </div>
+
+    <div class="vx-sec-h" style="margin-top:22px">Your Downlines</div>
+    <div id="vxRefList"></div>
+  </section>
+
+  <!-- TRANSACTIONS -->
+  <section class="vx-page" id="page-transactions">
+    <div class="vx-sec-h" style="margin-bottom:14px">Transaction History</div>
+    <div id="vxTxList"></div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="vx-page" id="page-profile">
+    <div class="vx-profile-head">
+      <div class="vx-avatar" id="vxAvatar">V</div>
+      <h2 id="vxProfUser">User</h2>
+      <p id="vxProfEmail">email</p>
+    </div>
+    <div class="vx-profile-row"><span class="k">Phone</span><span class="v" id="vxProfPhone">—</span></div>
+    <div class="vx-profile-row"><span class="k">Deposit Wallet</span><span class="v" id="vxProfDep">—</span></div>
+    <div class="vx-profile-row"><span class="k">Withdrawal Wallet</span><span class="v" id="vxProfWit">—</span></div>
+    <div class="vx-profile-row"><span class="k">Total Invested</span><span class="v" id="vxProfInvested">—</span></div>
+    <div class="vx-profile-row"><span class="k">Referral Earnings</span><span class="v" id="vxProfRef">—</span></div>
+    <div class="vx-profile-row"><span class="k">Joined</span><span class="v" id="vxProfJoined">—</span></div>
+    <button class="vx-logout" id="vxLogout">Logout</button>
+  </section>
+
+</main>
+
+<nav class="vx-nav">
+  <div class="vx-nav-inner">
+    <button class="active" data-page="dashboard"><i class="ph ph-house"></i>Dashboard</button>
+    <button data-page="referral"><i class="ph ph-users-three"></i>Referral</button>
+    <button data-page="transactions"><i class="ph ph-receipt"></i>History</button>
+    <button data-page="profile"><i class="ph ph-user"></i>Profile</button>
+  </div>
+</nav>
+
+<div id="vx-modal-layer"></div>
+
+<div class="vx-overlay" id="vxBuyOverlay">
+  <div class="vx-sheet">
+    <button class="vx-sheet-close" id="vxBuyClose"><i class="ph ph-x"></i></button>
+    <h3 id="vxBuyTitle">Buy Plan</h3>
+    <p class="sh-sub" id="vxBuySub"></p>
+    <div class="vx-sheet-info" id="vxBuyInfo"></div>
+    <button class="vx-sheet-btn" id="vxBuyConfirm">Confirm Purchase</button>
+  </div>
+</div>
+
+<!-- SOCIAL POPOUT -->
+<div class="vx-social-overlay" id="vxSocialOverlay">
+  <div class="vx-social-modal">
+    <button class="sm-close" id="vxSocialClose"><i class="ph ph-x"></i></button>
+    <div class="sm-ico"><i class="ph ph-users-four"></i></div>
+    <h3>Join Our Community</h3>
+    <p>Stay updated with announcements, payouts, and exclusive tips. Join the official Vinox groups.</p>
+    <div class="vx-social-btns">
+      <a href="https://t.me/+8t_qXtrkwhAwNmM8" target="_blank" rel="noopener" class="tg">
+        <i class="ph ph-telegram-logo"></i> Join Telegram Group
+      </a>
+      <a href="https://chat.whatsapp.com/YOUR_WHATSAPP_LINK" target="_blank" rel="noopener" class="wa">
+        <i class="ph ph-whatsapp-logo"></i> Join WhatsApp Group
+      </a>
+    </div>
+    <button class="sm-later" id="vxSocialLater">Maybe later</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, updateDoc, runTransaction,
+  arrayUnion, increment, serverTimestamp, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+const DAILY_BONUS = 0.01;
+const REF_RATES = { 1: 0.15, 2: 0.03, 3: 0.01 };
+
+const PLANS = [
+  { id:'vinox1', name:'Vinox 1', cost:5,    daily:1,  days:25 },
+  { id:'vinox2', name:'Vinox 2', cost:10,   daily:2,  days:25 },
+  { id:'vinox3', name:'Vinox 3', cost:20,   daily:4,  days:25 },
+  { id:'vinox4', name:'Vinox 4', cost:50,   daily:10, days:25 },
+  { id:'vinox5', name:'Vinox 5', cost:100,  daily:20, days:25 },
+  { id:'vinox6', name:'Vinox 6', cost:300,  daily:60, days:25 },
+  { id:'vinox7', name:'Vinox 7', cost:500,  daily:0,  days:25, comingSoon:true },
+  { id:'vinox8', name:'Vinox 8', cost:700,  daily:0,  days:25, comingSoon:true },
+  { id:'vinox9', name:'Vinox 9', cost:1000, daily:0,  days:25, comingSoon:true }
+];
+
+let ME = null;
+let PROFILE = null;
+let countdownInterval = null;
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtTime(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+// ================== AUTH BOOTSTRAP ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){
+      vxModal('error','Profile not found. Please sign in again.');
+      setTimeout(()=>{ signOut(auth); window.location.href='login.html'; }, 1500);
+      return;
+    }
+    const username = uidSnap.data().username;
+    ME = { uid: user.uid, username };
+
+    await runROIEngine(username);
+    await loadAll();
+    renderAll();
+    showSocialPopout();
+    startCountdownLoop();
+  }catch(e){
+    console.error('Boot error:', e);
+    vxModal('error','Failed to load dashboard. Please refresh.');
+  }
+});
+
+// ================== SOCIAL POPOUT ==================
+function showSocialPopout(){
+  if(sessionStorage.getItem('vxSocialDismissed') === '1') return;
+  setTimeout(() => {
+    $('vxSocialOverlay').classList.add('show');
+  }, 1200);
+}
+$('vxSocialClose').addEventListener('click', () => {
+  $('vxSocialOverlay').classList.remove('show');
+  sessionStorage.setItem('vxSocialDismissed','1');
+});
+$('vxSocialLater').addEventListener('click', () => {
+  $('vxSocialOverlay').classList.remove('show');
+  sessionStorage.setItem('vxSocialDismissed','1');
+});
+$('vxSocialOverlay').addEventListener('click', (e) => {
+  if(e.target === $('vxSocialOverlay')){
+    $('vxSocialOverlay').classList.remove('show');
+    sessionStorage.setItem('vxSocialDismissed','1');
+  }
+});
+
+// ================== ROI ENGINE ==================
+function eligiblePayoutTimestamps(fromMs, toMs){
+  const out = [];
+  if(!fromMs) fromMs = 0;
+  const start = new Date(fromMs);
+  let cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 1, 0, 0, 0);
+  if(cursor.getTime() <= fromMs) cursor.setDate(cursor.getDate() + 1);
+  const end = new Date(toMs);
+  while(cursor.getTime() <= end.getTime()){
+    if(cursor.getDay() !== 0) out.push(cursor.getTime());
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return out;
+}
+
+async function runROIEngine(username){
+  try{
+    const invSnap = await getDoc(doc(db,'investments',username));
+    if(!invSnap.exists()) return;
+    const data = invSnap.data() || {};
+    const list = Array.isArray(data.activeInvestments) ? data.activeInvestments : [];
+    if(!list.length) return;
+
+    const now = Date.now();
+    let totalROI = 0;
+    let changed = false;
+    const newTx = [];
+
+    for(const inv of list){
+      if(inv.status !== 'active') continue;
+      const last = inv.lastROIAtMs || (inv.startedAt ? new Date(inv.startedAt).getTime() : 0);
+      const remainingDays = (inv.duration || 25) - (inv.daysCompleted || 0);
+      if(remainingDays <= 0) continue;
+
+      const payouts = eligiblePayoutTimestamps(last, now);
+      if(!payouts.length) continue;
+
+      const creditCount = Math.min(payouts.length, remainingDays);
+      const amount = +(inv.dailyROI * creditCount).toFixed(4);
+
+      totalROI += amount;
+      inv.daysCompleted = (inv.daysCompleted || 0) + creditCount;
+      inv.totalEarned = +((inv.totalEarned || 0) + amount).toFixed(4);
+      inv.lastROIAtMs = payouts[creditCount - 1];
+      if(inv.daysCompleted >= (inv.duration || 25)) inv.status = 'completed';
+      changed = true;
+
+      newTx.push({
+        type:'roi',
+        title:`ROI — ${inv.planName}${creditCount>1?` (${creditCount} days)`:''}`,
+        amount,
+        currency:'USD',
+        createdAt:new Date().toISOString()
+      });
+    }
+
+    if(!changed || totalROI <= 0) return;
+
+    await runTransaction(db, async (tx) => {
+      const uRef = doc(db,'users',username);
+      const invRef = doc(db,'investments',username);
+      const uDoc = await tx.get(uRef);
+      const iDoc = await tx.get(invRef);
+      if(!uDoc.exists()) return;
+      tx.update(uRef, { withdrawalWallet: increment(+totalROI.toFixed(4)) });
+      tx.update(invRef, {
+        activeInvestments: list,
+        totalReturns: increment(+totalROI.toFixed(4))
+      });
+    });
+
+    if(newTx.length){
+      const thRef = doc(db,'transactionHistory',username);
+      const thDoc = await getDoc(thRef);
+      if(thDoc.exists()){
+        await updateDoc(thRef, { transactions: arrayUnion(...newTx) });
+      } else {
+        await setDoc(thRef, { username, transactions:newTx, createdAt: serverTimestamp() });
+      }
+    }
+  }catch(e){
+    console.warn('ROI engine error:', e);
+  }
+}
+
+// ================== DAILY BONUS ==================
+function getMostRecentCutoff(){
+  const now = new Date();
+  let d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1, 0, 0, 0);
+  if(d.getTime() > now.getTime()) d.setDate(d.getDate() - 1);
+  while(d.getDay() === 0) d.setDate(d.getDate() - 1);
+  return d.getTime();
+}
+
+function bonusStatus(){
+  const list = PROFILE?.investmentsData?.activeInvestments || [];
+  const hasActive = list.some(i => i.status === 'active');
+  if(!hasActive) return { canClaim:false, reason:'no_active' };
+
+  const cutoff = getMostRecentCutoff();
+  const last = PROFILE?.lastBonusClaimAtMs || 0;
+  if(last >= cutoff) return { canClaim:false, reason:'already_claimed' };
+
+  return { canClaim:true, reason:'available' };
+}
+
+async function loadAll(){
+  const [pSnap, iSnap, rSnap, tSnap] = await Promise.all([
+    getDoc(doc(db,'users',ME.username)),
+    getDoc(doc(db,'investments',ME.username)),
+    getDoc(doc(db,'referralStats',ME.username)),
+    getDoc(doc(db,'transactionHistory',ME.username))
+  ]);
+  PROFILE = {
+    ...(pSnap.exists() ? pSnap.data() : {}),
+    investmentsData: iSnap.exists() ? iSnap.data() : { activeInvestments: [] },
+    refStats: rSnap.exists() ? rSnap.data() : {},
+    txData: tSnap.exists() ? tSnap.data() : { transactions: [] }
+  };
+}
+
+function renderAll(){
+  renderWallets();
+  renderBonus();
+  renderActiveInvestments();
+  renderPlans();
+  renderReferralPage();
+  renderTransactions();
+  renderProfile();
+  $('vxInviteCode').textContent = ME.username;
+  tickCountdowns();
+}
+
+function renderWallets(){
+  const dep = +(PROFILE.depositWallet || 0);
+  const wit = +(PROFILE.withdrawalWallet || 0);
+  $('vxDep').textContent = fmtUSD(dep);
+  $('vxWit').textContent = fmtUSD(wit);
+  $('vxTotal').textContent = fmtUSD(dep + wit);
+}
+
+function renderBonus(){
+  const el = $('vxBonus');
+  const st = bonusStatus();
+
+  if(st.reason === 'no_active'){
+    el.className = 'vx-bonus locked';
+    el.innerHTML = `<i class="ph ph-lock bonus-ic"></i>
+      <div class="b-txt">Buy an active plan to unlock <strong>${fmtUSD(DAILY_BONUS)}/day</strong> bonus</div>`;
+    return;
+  }
+
+  if(st.reason === 'already_claimed'){
+    el.className = 'vx-bonus claimed';
+    el.innerHTML = `<i class="ph ph-check-circle bonus-ic"></i>
+      <div class="b-txt">Daily bonus claimed today. Come back after <strong>1 AM</strong>.</div>
+      <button class="vx-claim-btn done" disabled>Claimed</button>`;
+    return;
+  }
+
+  el.className = 'vx-bonus active';
+  el.innerHTML = `<i class="ph ph-gift bonus-ic"></i>
+    <div class="b-txt">Daily bonus ready — <strong>${fmtUSD(DAILY_BONUS)}</strong></div>
+    <button class="vx-claim-btn" id="vxClaimBtn">Claim</button>`;
+  $('vxClaimBtn').addEventListener('click', claimBonus);
+}
+
+async function claimBonus(){
+  const btn = $('vxClaimBtn');
+  if(!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'Claiming…';
+
+  try{
+    const st = bonusStatus();
+    if(!st.canClaim) throw new Error('not_eligible');
+    const cutoff = getMostRecentCutoff();
+
+    await runTransaction(db, async (tx) => {
+      const uRef = doc(db,'users',ME.username);
+      const uDoc = await tx.get(uRef);
+      if(!uDoc.exists()) throw new Error('no-user');
+      const u = uDoc.data();
+      const last = u.lastBonusClaimAtMs || 0;
+      if(last >= cutoff) throw new Error('already_claimed');
+
+      tx.update(uRef, {
+        withdrawalWallet: increment(DAILY_BONUS),
+        lastBonusClaimAtMs: cutoff
+      });
+    });
+
+    const entry = {
+      type:'bonus', title:'Daily Bonus Claim', amount:DAILY_BONUS,
+      currency:'USD', createdAt:new Date().toISOString()
+    };
+    const thRef = doc(db,'transactionHistory',ME.username);
+    const thDoc = await getDoc(thRef);
+    if(thDoc.exists()){
+      await updateDoc(thRef, { transactions: arrayUnion(entry) });
+    } else {
+      await setDoc(thRef, { username: ME.username, transactions:[entry], createdAt: serverTimestamp() });
+    }
+
+    vxModal('success', `${fmtUSD(DAILY_BONUS)} bonus added to withdrawal wallet!`, 'Bonus Claimed');
+    await loadAll();
+    renderAll();
+  }catch(e){
+    if(String(e.message).includes('already_claimed')){
+      vxModal('warning','You already claimed today. Try after 1 AM.');
+    } else if(String(e.message).includes('not_eligible')){
+      vxModal('error','You need an active investment to claim.');
+    } else {
+      vxModal('error','Claim failed. Please try again.');
+    }
+    await loadAll();
+    renderAll();
+  }
+}
+
+function renderActiveInvestments(){
+  const list = PROFILE.investmentsData?.activeInvestments || [];
+  const active = list.filter(i => i.status === 'active');
+  const completed = list.filter(i => i.status === 'completed');
+  $('vxInvCount').textContent = `${active.length} active`;
+
+  const el = $('vxActiveList');
+  if(!active.length && !completed.length){
+    el.innerHTML = `<div class="vx-empty"><i class="ph ph-chart-line-up"></i>No investments yet. Pick a plan below to start earning.</div>`;
+    return;
+  }
+  const all = [...active, ...completed.slice(-3).reverse()];
+  el.innerHTML = all.map(inv => {
+    const done = +inv.daysCompleted || 0;
+    const dur = +inv.duration || 25;
+    const pct = Math.min(100, (done/dur)*100);
+    const isActive = inv.status === 'active';
+    return `
+      <div class="vx-inv">
+        <div class="vx-inv-top">
+          <div class="vx-inv-name">${inv.planName}</div>
+          <div class="vx-inv-status ${inv.status}">${inv.status}</div>
+        </div>
+        <div class="vx-inv-progress"><div style="width:${pct}%"></div></div>
+        <div class="vx-inv-info">
+          <span>${done}/${dur} days</span>
+          <span>${fmtUSD(inv.dailyROI)}/day · earned <strong>${fmtUSD(inv.totalEarned||0)}</strong></span>
+        </div>
+        ${isActive ? `
+          <div class="vx-inv-countdown">
+            <div class="cd-l">
+              <i class="ph ph-timer"></i>
+              <span>Next ROI In</span>
+            </div>
+            <div class="cd-time" data-cd="${inv.planId || inv.planName}">--:--:--</div>
+          </div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ================== COUNTDOWN ==================
+function getNextROITime(){
+  const now = new Date();
+  let d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1, 0, 0, 0);
+  if(d.getTime() <= now.getTime()) d.setDate(d.getDate() + 1);
+  while(d.getDay() === 0) d.setDate(d.getDate() + 1);
+  return d.getTime();
+}
+
+function formatCountdown(ms){
+  if(ms <= 0) return '00:00:00';
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return [h,m,s].map(n => String(n).padStart(2,'0')).join(':');
+}
+
+function tickCountdowns(){
+  const nextTime = getNextROITime();
+  const now = Date.now();
+  const remaining = nextTime - now;
+  document.querySelectorAll('[data-cd]').forEach(el => {
+    el.textContent = formatCountdown(remaining);
+  });
+}
+
+function startCountdownLoop(){
+  if(countdownInterval) clearInterval(countdownInterval);
+  countdownInterval = setInterval(tickCountdowns, 1000);
+}
+
+// ================== PLANS ==================
+function renderPlans(){
+  const el = $('vxPlans');
+  el.innerHTML = PLANS.map(p => {
+    const soon = !!p.comingSoon;
+    const totalReturn = soon ? 0 : p.daily * p.days;
+    const dailyShow = soon ? '—' : fmtUSD(p.daily);
+    const totalShow = soon ? '—' : fmtUSD(totalReturn);
+    return `
+      <div class="vx-plan ${soon?'soon':''}">
+        <div class="vx-plan-top">
+          <div class="vx-plan-name">
+            ${p.name}
+            ${soon ? '<span class="vx-soon-badge">Coming Soon</span>' : ''}
+          </div>
+          <div class="vx-plan-cost">${fmtUSD(p.cost)}</div>
+        </div>
+        <div class="vx-plan-stats">
+          <div><span>Daily</span><strong>${dailyShow}</strong></div>
+          <div><span>Duration</span><strong>${p.days} days</strong></div>
+          <div><span>Total</span><strong>${totalShow}</strong></div>
+        </div>
+        ${soon
+          ? `<button class="vx-plan-buy disabled" disabled>Coming Soon</button>`
+          : `<button class="vx-plan-buy" data-plan="${p.id}">Buy for ${fmtUSD(p.cost)}</button>`}
+      </div>`;
+  }).join('');
+  el.querySelectorAll('button[data-plan]:not(.disabled)').forEach(b => {
+    b.addEventListener('click', () => openBuySheet(b.dataset.plan));
+  });
+}
+
+function renderReferralPage(){
+  const rs = PROFILE.refStats || {};
+  $('vxL1Count').textContent = (rs.level1Referrals || []).length;
+  $('vxL2Count').textContent = (rs.level2Referrals || []).length;
+  $('vxL3Count').textContent = (rs.level3Referrals || []).length;
+  $('vxL1Earn').textContent = fmtUSD(rs.level1Earnings || 0);
+  $('vxL2Earn').textContent = fmtUSD(rs.level2Earnings || 0);
+  $('vxL3Earn').textContent = fmtUSD(rs.level3Earnings || 0);
+
+  const el = $('vxRefList');
+  const lines = [];
+  [1,2,3].forEach(lvl => {
+    (rs[`level${lvl}Referrals`] || []).forEach(u => {
+      lines.push(`<div class="vx-ref-item"><div><span class="lvl l${lvl}">L${lvl}</span><strong>${u}</strong></div></div>`);
+    });
+  });
+  el.innerHTML = lines.length ? lines.join('') : `<div class="vx-empty"><i class="ph ph-users-three"></i>No downlines yet. Share your invite code to start earning.</div>`;
+}
+
+function renderTransactions(){
+  const txs = (PROFILE.txData?.transactions || []).slice().reverse();
+  const el = $('vxTxList');
+  if(!txs.length){
+    el.innerHTML = `<div class="vx-empty"><i class="ph ph-receipt"></i>No transactions yet.</div>`;
+    return;
+  }
+  const icons = { deposit:'ph-arrow-down', withdraw:'ph-arrow-up', roi:'ph-chart-line-up', ref:'ph-users-three', bonus:'ph-gift', invest:'ph-rocket' };
+  el.innerHTML = txs.map(t => {
+    const isCredit = ['deposit','roi','ref','bonus'].includes(t.type);
+    const icon = icons[t.type] || 'ph-circle';
+    return `
+      <div class="vx-tx">
+        <div class="vx-tx-icon ${t.type}"><i class="ph ${icon}"></i></div>
+        <div class="vx-tx-body">
+          <div class="vx-tx-title">${t.title || t.type}</div>
+          <div class="vx-tx-date">${fmtTime(t.createdAt)}</div>
+        </div>
+        <div class="vx-tx-amt ${isCredit?'credit':'debit'}">${isCredit?'+':'−'}${fmtUSD(t.amount)}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderProfile(){
+  $('vxAvatar').textContent = (ME.username[0] || 'V').toUpperCase();
+  $('vxProfUser').textContent = ME.username;
+  $('vxProfEmail').textContent = PROFILE.email || '—';
+  $('vxProfPhone').textContent = PROFILE.phone || '—';
+  $('vxProfDep').textContent = fmtUSD(PROFILE.depositWallet || 0);
+  $('vxProfWit').textContent = fmtUSD(PROFILE.withdrawalWallet || 0);
+  $('vxProfInvested').textContent = fmtUSD(PROFILE.totalInvested || 0);
+  const rs = PROFILE.refStats || {};
+  const totalRefEarn = (rs.level1Earnings||0) + (rs.level2Earnings||0) + (rs.level3Earnings||0);
+  $('vxProfRef').textContent = fmtUSD(totalRefEarn);
+  $('vxProfJoined').textContent = fmtTime(PROFILE.createdAt);
+}
+
+// ================== BUY FLOW ==================
+let buyPlan = null;
+
+function openBuySheet(planId){
+  const plan = PLANS.find(p => p.id === planId);
+  if(!plan || plan.comingSoon) return;
+  buyPlan = plan;
+  $('vxBuyTitle').textContent = `Buy ${plan.name}`;
+  $('vxBuySub').textContent = `Earn ${fmtUSD(plan.daily)} every day for ${plan.days} days`;
+  $('vxBuyInfo').innerHTML = `
+    <div class="row"><span class="k">Plan cost</span><span class="v">${fmtUSD(plan.cost)}</span></div>
+    <div class="row"><span class="k">Daily ROI</span><span class="v">${fmtUSD(plan.daily)}</span></div>
+    <div class="row"><span class="k">Duration</span><span class="v">${plan.days} days</span></div>
+    <div class="row"><span class="k">Total return</span><span class="v" style="color:var(--vx-green)">${fmtUSD(plan.daily*plan.days)}</span></div>
+    <div class="row"><span class="k">From wallet</span><span class="v">Deposit</span></div>`;
+  $('vxBuyConfirm').disabled = false;
+  $('vxBuyConfirm').textContent = `Confirm — Pay ${fmtUSD(plan.cost)}`;
+  $('vxBuyOverlay').classList.add('show');
+}
+
+$('vxBuyClose').addEventListener('click', () => $('vxBuyOverlay').classList.remove('show'));
+$('vxBuyOverlay').addEventListener('click', (e) => { if(e.target === $('vxBuyOverlay')) $('vxBuyOverlay').classList.remove('show'); });
+
+$('vxBuyConfirm').addEventListener('click', async () => {
+  if(!buyPlan) return;
+  const plan = buyPlan;
+  const cost = plan.cost;
+  const btn = $('vxBuyConfirm');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+
+  try{
+    const isFirst = !PROFILE.firstPurchaseDone;
+
+    await runTransaction(db, async (tx) => {
+      const userRef = doc(db,'users',ME.username);
+      const invRef = doc(db,'investments',ME.username);
+      const uDoc = await tx.get(userRef);
+      const iDoc = await tx.get(invRef);
+      if(!uDoc.exists()) throw new Error('no-user');
+
+      const u = uDoc.data();
+      const dep = +(u.depositWallet || 0);
+      if(dep < cost) throw new Error('insufficient');
+
+      const updates = {
+        depositWallet: +(dep - cost).toFixed(4),
+        totalInvested: increment(+cost)
+      };
+      if(isFirst){
+        updates.firstPurchaseDone = true;
+        updates.firstPlanCostUSD = cost;
+        updates.activePlanName = plan.name;
+      }
+      tx.update(userRef, updates);
+
+      const newInv = {
+        planId: plan.id, planName: plan.name,
+        amountInvested: cost, currency: 'USD',
+        dailyROI: plan.daily, duration: plan.days,
+        daysCompleted: 0, totalEarned: 0,
+        status: 'active',
+        startedAt: new Date().toISOString(),
+        lastROIAtMs: 0
+      };
+
+      if(iDoc.exists()){
+        const arr = Array.isArray(iDoc.data().activeInvestments) ? iDoc.data().activeInvestments : [];
+        tx.update(invRef, {
+          activeInvestments: [...arr, newInv],
+          totalInvested: increment(+cost)
+        });
+      } else {
+        tx.set(invRef, {
+          username: ME.username,
+          activeInvestments: [newInv],
+          totalInvested: cost,
+          totalReturns: 0,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      if(isFirst && u.referredBy){
+        await payReferralChain(tx, u.referredBy, ME.username, cost);
+      }
+    });
+
+    await logTx(ME.username, {
+      type:'invest', title:`Purchased ${plan.name}`, amount:cost, currency:'USD'
+    });
+
+    vxModal('success', `${plan.name} activated! Daily ROI credits at 1 AM.`, 'Investment Active');
+    $('vxBuyOverlay').classList.remove('show');
+    await loadAll();
+    renderAll();
+  }catch(err){
+    console.error('Buy error:', err);
+    if(String(err.message||err).includes('insufficient')){
+      vxModal('error','Insufficient deposit balance. Please deposit first.');
+    } else {
+      vxModal('error','Could not complete purchase. Try again.');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = buyPlan ? `Confirm — Pay ${fmtUSD(buyPlan.cost)}` : 'Confirm Purchase';
+  }
+});
+
+async function payReferralChain(tx, directRef, buyerUsername, planCostUSD){
+  let current = directRef;
+  let level = 1;
+  const bonuses = [];
+  while(current && level <= 3){
+    const rate = REF_RATES[level];
+    const amount = +(planCostUSD * rate).toFixed(4);
+    bonuses.push({ username: current, level, amount });
+    const nextSnap = await tx.get(doc(db,'users',current));
+    if(!nextSnap.exists()) break;
+    const up = nextSnap.data().referredBy || '';
+    if(!up || up === current) break;
+    current = up;
+    level++;
+  }
+
+  for(const b of bonuses){
+    const uRef = doc(db,'users',b.username);
+    const uDoc = await tx.get(uRef);
+    if(!uDoc.exists()) continue;
+    tx.update(uRef, {
+      withdrawalWallet: increment(b.amount),
+      referralBonus: increment(b.amount),
+      referralCount: increment(b.level === 1 ? 1 : 0)
+    });
+    const statRef = doc(db,'referralStats',b.username);
+    const st = await tx.get(statRef);
+    if(st.exists()){
+      tx.update(statRef, {
+        [`level${b.level}Referrals`]: arrayUnion(buyerUsername),
+        [`level${b.level}Earnings`]: increment(b.amount),
+        totalReferralBonus: increment(b.amount),
+        lastReferralAt: new Date().toISOString()
+      });
+    } else {
+      tx.set(statRef, {
+        username: b.username,
+        [`level${b.level}Referrals`]: [buyerUsername],
+        [`level${b.level}Earnings`]: b.amount,
+        totalReferralBonus: b.amount,
+        referralCount: b.level === 1 ? 1 : 0,
+        createdAt: new Date().toISOString(),
+        lastReferralAt: new Date().toISOString()
+      });
+    }
+    const thRef = doc(db,'transactionHistory',b.username);
+    const thDoc = await tx.get(thRef);
+    const entry = {
+      type:'ref', title:`L${b.level} Referral Bonus (${buyerUsername})`,
+      amount:b.amount, currency:'USD', createdAt: new Date().toISOString()
+    };
+    if(thDoc.exists()){
+      tx.update(thRef, { transactions: arrayUnion(entry) });
+    } else {
+      tx.set(thRef, { username: b.username, transactions:[entry], createdAt: new Date().toISOString() });
+    }
+  }
+}
+
+async function logTx(username, entry){
+  const ref = doc(db,'transactionHistory',username);
+  const s = await getDoc(ref);
+  const full = { ...entry, createdAt: new Date().toISOString() };
+  if(s.exists()){
+    await updateDoc(ref, { transactions: arrayUnion(full) });
+  } else {
+    await setDoc(ref, { username, transactions:[full], createdAt: serverTimestamp() });
+  }
+}
+
+// ================== NAV ==================
+document.querySelectorAll('.vx-nav button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.vx-nav button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.vx-page').forEach(p => p.classList.remove('active'));
+    $('page-' + b.dataset.page).classList.add('active');
+  });
+});
+
+// ================== QUICK ACTIONS ==================
+$('qaDeposit').addEventListener('click', () => { window.location.href = 'deposit.html'; });
+$('qaWithdraw').addEventListener('click', () => { window.location.href = 'withdraw.html'; });
+$('qaInvest').addEventListener('click', () => {
+  document.querySelector('.vx-plans').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+// ================== REFERRAL COPY ==================
+$('vxCopyCode').addEventListener('click', async () => {
+  try{ await navigator.clipboard.writeText(ME.username); vxModal('success','Invite code copied!'); }
+  catch{ vxModal('error','Copy failed.'); }
+});
+$('vxCopyLink').addEventListener('click', async () => {
+  const link = `${location.origin}/index.html?ref=${ME.username}`;
+  try{ await navigator.clipboard.writeText(link); vxModal('success','Invite link copied!'); }
+  catch{ vxModal('error','Copy failed.'); }
+});
+
+// ================== LOGOUT ==================
+$('vxLogout').addEventListener('click', async () => {
+  if(countdownInterval) clearInterval(countdownInterval);
+  await signOut(auth);
+  sessionStorage.clear();
+  window.location.href = 'login.html';
+});
+
+// ================== MARQUEE DUPLICATION ==================
+(() => {
+  const track = $('vxMarqueeTrack');
+  track.innerHTML += track.innerHTML;
+})();
+</script>
+</body>
+</html>
