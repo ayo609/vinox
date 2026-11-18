@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vinox — Admin Overview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{min-height:100vh;overflow-x:hidden;padding-bottom:80px}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+/* TOP BAR */
+.admin-topbar{position:sticky;top:0;z-index:100;background:rgba(11,7,22,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--vx-line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-brand{font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.topbar-brand span{color:var(--vx-gold)}
+.topbar-brand small{font-size:10px;color:var(--vx-muted);font-weight:700;letter-spacing:0.5px;margin-left:4px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.topbar-user{font-size:11px;color:var(--vx-muted);font-weight:600;padding:5px 10px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:6px;white-space:nowrap}
+.logout-btn{background:rgba(255,92,122,0.1);border:1px solid rgba(255,92,122,0.3);color:var(--vx-danger);padding:7px 12px;border-radius:7px;font-family:'Manrope';font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px}
+.logout-btn:hover{background:rgba(255,92,122,0.2)}
+.logout-btn i{font-size:13px}
+
+/* SHELL */
+.admin-shell{max-width:900px;margin:0 auto;padding:22px 18px}
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin:0 0 4px}
+.page-sub{font-size:12.5px;color:var(--vx-muted);margin:0 0 22px;font-weight:500}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:22px}
+.stat-card{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:16px;animation:vxFadeUp .35s ease both;transition:all .2s}
+.stat-card:hover{border-color:var(--vx-line-2);background:var(--vx-card-2)}
+.stat-card .sk{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--vx-muted);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.stat-card .sk i{font-size:14px;color:var(--vx-violet)}
+.stat-card .sv{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+.stat-card .sv.green{color:var(--vx-green)}
+.stat-card .sv.gold{color:var(--vx-gold)}
+.stat-card .sv.danger{color:var(--vx-danger)}
+
+/* QUICK ACTIONS */
+.section-h{font-size:13px;font-weight:800;letter-spacing:0.3px;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between}
+.section-h small{font-size:11px;color:var(--vx-muted);font-weight:600}
+.quick-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
+.quick-btn{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--vx-text);display:flex;align-items:center;justify-content:space-between;transition:all .2s;font-family:'Manrope';cursor:pointer}
+.quick-btn:hover{background:var(--vx-card-2);border-color:var(--vx-line-2);transform:translateY(-1px)}
+.quick-btn .qb-l{display:flex;align-items:center;gap:10px}
+.quick-btn .qb-ico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.quick-btn .qb-ico.violet{background:rgba(168,85,247,0.14);color:var(--vx-violet)}
+.quick-btn .qb-ico.gold{background:rgba(245,200,107,0.14);color:var(--vx-gold)}
+.quick-btn .qb-ico.green{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.quick-btn .qb-ico.danger{background:rgba(255,92,122,0.14);color:var(--vx-danger)}
+.quick-btn .qb-t{font-size:12.5px;font-weight:800;letter-spacing:0.2px}
+.quick-btn .qb-s{font-size:10.5px;color:var(--vx-muted);font-weight:500;margin-top:2px}
+.quick-btn i.arrow{color:var(--vx-muted);font-size:16px}
+
+/* RECENT */
+.recent-list{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.recent-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(168,132,255,0.08);font-size:12.5px}
+.recent-row:last-child{border-bottom:none}
+.recent-row .rr-l{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.recent-row .rr-name{font-weight:800;color:var(--vx-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-row .rr-time{font-size:10.5px;color:var(--vx-muted);font-weight:500}
+.recent-row .rr-amt{font-weight:800;font-size:12.5px;white-space:nowrap}
+.recent-row .rr-amt.green{color:var(--vx-green)}
+.recent-row .rr-amt.gold{color:var(--vx-gold)}
+
+.empty{text-align:center;padding:24px 16px;color:var(--vx-muted);font-size:12px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:12px}
+.empty i{font-size:30px;color:var(--vx-muted-2);display:block;margin-bottom:8px}
+
+/* LOADING */
+.loading-wrap{text-align:center;padding:60px 20px;color:var(--vx-muted);font-size:13px}
+.loading-wrap .spinner{width:28px;height:28px;border:3px solid rgba(168,132,255,0.2);border-top-color:var(--vx-violet);border-radius:50%;animation:vxSpin .8s linear infinite;margin:0 auto 14px;display:block}
+
+/* BOTTOM NAV */
+.admin-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,7,22,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--vx-line);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.admin-nav-inner{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.admin-nav a{color:var(--vx-muted);text-decoration:none;font-family:'Manrope';font-size:10px;font-weight:700;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.3px;transition:color .2s;position:relative}
+.admin-nav a i{font-size:20px}
+.admin-nav a.active{color:var(--vx-violet)}
+.admin-nav a .nav-badge{position:absolute;top:-2px;right:calc(50% - 18px);background:var(--vx-danger);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center;display:none}
+.admin-nav a .nav-badge.show{display:block}
+
+/* MODAL */
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+@media(max-width:640px){
+  .admin-shell{padding:16px 14px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .quick-actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="admin-topbar">
+  <div class="topbar-brand">Vinox<span>.</span> <small>ADMIN</small></div>
+  <div class="topbar-actions">
+    <span class="topbar-user" id="adminUser">—</span>
+    <button class="logout-btn" id="logoutBtn"><i class="ph ph-sign-out"></i> Logout</button>
+  </div>
+</div>
+
+<div class="admin-shell">
+
+  <h1 class="page-title">Overview</h1>
+  <p class="page-sub">A snapshot of everything happening on Vinox.</p>
+
+  <div class="loading-wrap" id="loading"><span class="spinner"></span>Loading dashboard…</div>
+
+  <div id="mainContent" style="display:none">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="sk"><i class="ph ph-users"></i> Total Users</div>
+        <div class="sv" id="statUsers">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="sk"><i class="ph ph-wallet"></i> Total Deposited</div>
+        <div class="sv green" id="statDeposited">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="sk"><i class="ph ph-bank"></i> Total Withdrawn</div>
+        <div class="sv gold" id="statWithdrawn">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="sk"><i class="ph ph-clock"></i> Pending Deposits</div>
+        <div class="sv gold" id="statPendingDeposits">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="sk"><i class="ph ph-clock"></i> Pending Withdrawals</div>
+        <div class="sv gold" id="statPendingWithdrawals">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="sk"><i class="ph ph-rocket"></i> Active Plans</div>
+        <div class="sv" id="statActiveInvestments">0</div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="section-h">Quick Actions</div>
+    <div class="quick-actions">
+      <a href="admin-users.html" class="quick-btn">
+        <div class="qb-l">
+          <div class="qb-ico violet"><i class="ph ph-users"></i></div>
+          <div>
+            <div class="qb-t">Manage Users</div>
+            <div class="qb-s">View all registered users</div>
+          </div>
+        </div>
+        <i class="ph ph-arrow-right arrow"></i>
+      </a>
+      <a href="admin-deposits.html" class="quick-btn">
+        <div class="qb-l">
+          <div class="qb-ico green"><i class="ph ph-arrow-down"></i></div>
+          <div>
+            <div class="qb-t">Deposits</div>
+            <div class="qb-s">Approve / reject requests</div>
+          </div>
+        </div>
+        <i class="ph ph-arrow-right arrow"></i>
+      </a>
+      <a href="admin-withdrawals.html" class="quick-btn">
+        <div class="qb-l">
+          <div class="qb-ico gold"><i class="ph ph-arrow-up"></i></div>
+          <div>
+            <div class="qb-t">Withdrawals</div>
+            <div class="qb-s">Mark paid or refund</div>
+          </div>
+        </div>
+        <i class="ph ph-arrow-right arrow"></i>
+      </a>
+      <button class="quick-btn" id="refreshBtn">
+        <div class="qb-l">
+          <div class="qb-ico danger"><i class="ph ph-arrows-clockwise"></i></div>
+          <div>
+            <div class="qb-t">Refresh Data</div>
+            <div class="qb-s">Reload all statistics</div>
+          </div>
+        </div>
+        <i class="ph ph-arrow-right arrow"></i>
+      </button>
+    </div>
+
+    <!-- RECENT DEPOSITS -->
+    <div class="section-h" style="margin-top:22px">
+      <span>Recent Deposits</span>
+      <small id="recentDepCount">0</small>
+    </div>
+    <div id="recentDeposits"></div>
+
+    <!-- RECENT WITHDRAWALS -->
+    <div class="section-h" style="margin-top:22px">
+      <span>Recent Withdrawals</span>
+      <small id="recentWitCount">0</small>
+    </div>
+    <div id="recentWithdrawals"></div>
+
+  </div>
+
+</div>
+
+<nav class="admin-nav">
+  <div class="admin-nav-inner">
+    <a href="admin-dashboard.html" class="active"><i class="ph ph-chart-pie"></i>Overview</a>
+    <a href="admin-users.html"><i class="ph ph-users"></i>Users<span class="nav-badge" id="navBadgeUsers"></span></a>
+    <a href="admin-deposits.html"><i class="ph ph-arrow-down"></i>Deposits<span class="nav-badge" id="navBadgeDeposits"></span></a>
+    <a href="admin-withdrawals.html"><i class="ph ph-arrow-up"></i>Withdrawals<span class="nav-badge" id="navBadgeWithdrawals"></span></a>
+  </div>
+</nav>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+let ADMIN = null;
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+// ================== FORMAT ==================
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+// ================== AUTH CHECK ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'admin-login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){ window.location.href = 'admin-login.html'; return; }
+    const username = uidSnap.data().username;
+    const pSnap = await getDoc(doc(db,'users',username));
+    if(!pSnap.exists() || !pSnap.data().isAdmin){
+      await signOut(auth);
+      window.location.href = 'admin-login.html';
+      return;
+    }
+    ADMIN = { uid: user.uid, username };
+    $('adminUser').textContent = '👤 ' + username;
+    await loadAll();
+  }catch(e){
+    console.error(e);
+    window.location.href = 'admin-login.html';
+  }
+});
+
+// ================== LOAD ALL ==================
+async function loadAll(){
+  try{
+    const [uSnap, dSnap, wSnap] = await Promise.all([
+      getDocs(collection(db,'users')),
+      getDocs(collection(db,'depositRequests')),
+      getDocs(collection(db,'withdrawalRequests'))
+    ]);
+
+    const users = [];
+    uSnap.forEach(d => users.push({ id:d.id, ...d.data() }));
+
+    const deposits = [];
+    dSnap.forEach(d => deposits.push({ id:d.id, ...d.data() }));
+    deposits.sort((a,b) => {
+      const aT = a.createdAt?.toDate?.().getTime?.() || new Date(a.createdAtISO||0).getTime();
+      const bT = b.createdAt?.toDate?.().getTime?.() || new Date(b.createdAtISO||0).getTime();
+      return bT - aT;
+    });
+
+    const withdrawals = [];
+    wSnap.forEach(d => withdrawals.push({ id:d.id, ...d.data() }));
+    withdrawals.sort((a,b) => {
+      const aT = a.createdAt?.toDate?.().getTime?.() || new Date(a.createdAtISO||0).getTime();
+      const bT = b.createdAt?.toDate?.().getTime?.() || new Date(b.createdAtISO||0).getTime();
+      return bT - aT;
+    });
+
+    // STATS
+    const totalDep = deposits.filter(d => d.status === 'approved').reduce((s,d) => s + (+d.amountUSD||0), 0);
+    const totalWit = withdrawals.filter(w => w.status === 'approved').reduce((s,w) => s + (+w.amountUSD||0), 0);
+    const pendDep = deposits.filter(d => d.status === 'pending').length;
+    const pendWit = withdrawals.filter(w => w.status === 'pending').length;
+    const activePlans = users.filter(u => u.firstPurchaseDone && u.activePlanName).length;
+
+    $('statUsers').textContent = users.length;
+    $('statDeposited').textContent = fmtUSD(totalDep);
+    $('statWithdrawn').textContent = fmtUSD(totalWit);
+    $('statPendingDeposits').textContent = pendDep;
+    $('statPendingWithdrawals').textContent = pendWit;
+    $('statActiveInvestments').textContent = activePlans;
+
+    // NAV BADGES
+    setBadge('navBadgeDeposits', pendDep);
+    setBadge('navBadgeWithdrawals', pendWit);
+
+    // RECENT LISTS (last 5 each)
+    renderRecentDeposits(deposits.slice(0,5));
+    renderRecentWithdrawals(withdrawals.slice(0,5));
+
+    $('loading').style.display = 'none';
+    $('mainContent').style.display = 'block';
+  }catch(e){
+    console.error('loadAll:', e);
+    $('loading').innerHTML = 'Failed to load dashboard. Please refresh.';
+  }
+}
+
+function setBadge(id, count){
+  const el = $(id);
+  if(!el) return;
+  if(count > 0){
+    el.textContent = count > 99 ? '99+' : count;
+    el.classList.add('show');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+function renderRecentDeposits(list){
+  const el = $('recentDeposits');
+  $('recentDepCount').textContent = `${list.length} recent`;
+  if(!list.length){
+    el.innerHTML = `<div class="empty"><i class="ph ph-arrow-down"></i>No deposit requests yet.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="recent-list">${list.map(d => `
+    <div class="recent-row">
+      <div class="rr-l">
+        <div class="rr-name">${d.username || '—'}</div>
+        <div class="rr-time">${fmtDate(d.createdAt || d.createdAtISO)} · ${d.status}</div>
+      </div>
+      <div class="rr-amt green">+${fmtUSD(d.amountUSD || 0)}</div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function renderRecentWithdrawals(list){
+  const el = $('recentWithdrawals');
+  $('recentWitCount').textContent = `${list.length} recent`;
+  if(!list.length){
+    el.innerHTML = `<div class="empty"><i class="ph ph-arrow-up"></i>No withdrawal requests yet.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="recent-list">${list.map(w => `
+    <div class="recent-row">
+      <div class="rr-l">
+        <div class="rr-name">${w.username || '—'}</div>
+        <div class="rr-time">${fmtDate(w.createdAt || w.createdAtISO)} · ${w.status}</div>
+      </div>
+      <div class="rr-amt gold">−${fmtUSD(w.amountUSD || 0)}</div>
+    </div>
+  `).join('')}</div>`;
+}
+
+// ================== REFRESH ==================
+$('refreshBtn').addEventListener('click', async () => {
+  vxModal('info','Refreshing data…','Refresh');
+  await loadAll();
+  vxModal('success','Dashboard refreshed!','Updated');
+});
+
+// ================== LOGOUT ==================
+$('logoutBtn').addEventListener('click', async () => {
+  await signOut(auth);
+  sessionStorage.clear();
+  window.location.href = 'admin-login.html';
+});
+</script>
+</body>
+</html>
