@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vinox — Admin Withdrawals</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{min-height:100vh;overflow-x:hidden;padding-bottom:80px}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+.admin-topbar{position:sticky;top:0;z-index:100;background:rgba(11,7,22,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--vx-line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-brand{font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.topbar-brand span{color:var(--vx-gold)}
+.topbar-brand small{font-size:10px;color:var(--vx-muted);font-weight:700;letter-spacing:0.5px;margin-left:4px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.topbar-user{font-size:11px;color:var(--vx-muted);font-weight:600;padding:5px 10px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:6px;white-space:nowrap}
+.logout-btn{background:rgba(255,92,122,0.1);border:1px solid rgba(255,92,122,0.3);color:var(--vx-danger);padding:7px 12px;border-radius:7px;font-family:'Manrope';font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px}
+.logout-btn:hover{background:rgba(255,92,122,0.2)}
+.logout-btn i{font-size:13px}
+
+.admin-shell{max-width:1000px;margin:0 auto;padding:22px 18px}
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin:0 0 4px}
+.page-sub{font-size:12.5px;color:var(--vx-muted);margin:0 0 20px;font-weight:500}
+
+/* ===== WITHDRAWAL TOGGLE CARD ===== */
+.toggle-card{background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(245,200,107,0.04));border:1px solid var(--vx-line-2);border-radius:14px;padding:16px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.toggle-icon{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0;transition:all .3s}
+.toggle-icon.on{background:rgba(74,222,128,0.18);color:var(--vx-green)}
+.toggle-icon.off{background:rgba(255,92,122,0.18);color:var(--vx-danger)}
+.toggle-body{flex:1;min-width:180px}
+.toggle-title{font-size:14px;font-weight:800;color:var(--vx-text);margin-bottom:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toggle-sub{font-size:11.5px;color:var(--vx-muted);font-weight:500;line-height:1.5}
+.toggle-state{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:0.4px;text-transform:uppercase}
+.toggle-state.on{background:rgba(74,222,128,0.16);color:var(--vx-green)}
+.toggle-state.off{background:rgba(255,92,122,0.16);color:var(--vx-danger)}
+
+.switch{position:relative;width:56px;height:30px;flex-shrink:0;cursor:pointer}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch .slider{position:absolute;inset:0;background:rgba(154,143,184,0.3);border-radius:30px;transition:all .3s}
+.switch .slider::before{content:'';position:absolute;left:3px;top:3px;width:24px;height:24px;background:#fff;border-radius:50%;transition:all .3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.switch input:checked + .slider{background:var(--vx-green)}
+.switch input:checked + .slider::before{transform:translateX(26px)}
+.switch.loading .slider{opacity:.5;pointer-events:none}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:18px}
+.sum-card{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;padding:11px 13px}
+.sum-card .sk{font-size:9.5px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--vx-muted);margin-bottom:4px}
+.sum-card .sv{font-size:16px;font-weight:800}
+.sum-card .sv.green{color:var(--vx-green)}
+.sum-card .sv.gold{color:var(--vx-gold)}
+
+/* FILTERS */
+.filters{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px;margin-bottom:18px;display:flex;flex-direction:column;gap:10px}
+.search-wrap{position:relative}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--vx-muted);font-size:15px;pointer-events:none}
+.search-wrap input{width:100%;height:42px;padding:0 12px 0 36px;background:rgba(11,7,22,0.5);border:1px solid var(--vx-line);border-radius:9px;font-family:'Manrope';font-size:12.5px;color:var(--vx-text);outline:none;transition:border-color .2s}
+.search-wrap input::placeholder{color:var(--vx-muted-2)}
+.search-wrap input:focus{border-color:var(--vx-violet)}
+.filter-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.filter-row select{height:38px;padding:0 10px;background:rgba(11,7,22,0.5);border:1px solid var(--vx-line);border-radius:8px;font-family:'Manrope';font-size:11.5px;color:var(--vx-text);outline:none;cursor:pointer}
+.filter-row select:focus{border-color:var(--vx-violet)}
+
+/* WITHDRAWAL CARD */
+.wd-card{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:14px;margin-bottom:10px;animation:vxFadeUp .35s ease both;transition:border-color .2s}
+.wd-card:hover{border-color:var(--vx-line-2)}
+.wd-card.pending{border-left:3px solid var(--vx-gold)}
+.wd-card.approved{border-left:3px solid var(--vx-green)}
+.wd-card.rejected{border-left:3px solid var(--vx-danger);opacity:.8}
+
+.wd-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.wd-user{display:flex;align-items:center;gap:9px}
+.wd-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--vx-violet),var(--vx-gold));display:grid;place-items:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.wd-uname{font-size:13px;font-weight:800;color:var(--vx-text);margin-bottom:1px}
+.wd-time{font-size:10.5px;color:var(--vx-muted);font-weight:500}
+.wd-amt{text-align:right}
+.wd-amt-main{font-size:17px;font-weight:800;color:var(--vx-gold);line-height:1.2}
+.wd-amt-sub{font-size:10.5px;color:var(--vx-muted);font-weight:600;margin-top:2px}
+.wd-status{font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:0.4px;text-transform:uppercase;align-self:flex-start}
+.wd-status.pending{background:rgba(245,200,107,0.16);color:var(--vx-gold)}
+.wd-status.approved{background:rgba(74,222,128,0.16);color:var(--vx-green)}
+.wd-status.rejected{background:rgba(255,92,122,0.16);color:var(--vx-danger)}
+
+/* DETAIL GRID */
+.wd-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:11px}
+.wd-meta div{background:rgba(11,7,22,0.5);border-radius:6px;padding:6px 9px}
+.wd-meta .mk{font-size:8.5px;color:var(--vx-muted);font-weight:600;letter-spacing:0.3px;text-transform:uppercase;margin-bottom:1px}
+.wd-meta .mv{font-size:11.5px;font-weight:700;color:var(--vx-text);word-break:break-all;overflow:hidden;text-overflow:ellipsis}
+.wd-meta .full{grid-column:1/-1}
+.wd-meta .mv.green{color:var(--vx-green)}
+.wd-meta .mv.danger{color:var(--vx-danger)}
+
+/* ACTIONS */
+.wd-actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn-sm{border:none;border-radius:7px;padding:7px 12px;font-family:'Manrope';font-size:10.5px;font-weight:800;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px;letter-spacing:0.2px}
+.btn-sm i{font-size:12px}
+.btn-approve{background:rgba(74,222,128,0.14);color:var(--vx-green);border:1px solid rgba(74,222,128,0.35)}
+.btn-approve:hover{background:rgba(74,222,128,0.24)}
+.btn-reject{background:rgba(255,92,122,0.1);color:var(--vx-danger);border:1px solid rgba(255,92,122,0.3)}
+.btn-reject:hover{background:rgba(255,92,122,0.2)}
+.btn-erase{background:rgba(154,143,184,0.1);color:var(--vx-muted);border:1px solid rgba(154,143,184,0.3)}
+.btn-erase:hover{background:rgba(255,92,122,0.14);color:var(--vx-danger);border-color:rgba(255,92,122,0.3)}
+
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:30px 16px;color:var(--vx-muted);font-size:12.5px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:12px}
+.empty i{font-size:34px;color:var(--vx-muted-2);display:block;margin-bottom:10px}
+.loading-wrap{text-align:center;padding:60px 20px;color:var(--vx-muted);font-size:13px}
+.loading-wrap .spinner{width:28px;height:28px;border:3px solid rgba(168,132,255,0.2);border-top-color:var(--vx-violet);border-radius:50%;animation:vxSpin .8s linear infinite;margin:0 auto 14px;display:block}
+
+/* BOTTOM NAV */
+.admin-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,7,22,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--vx-line);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.admin-nav-inner{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.admin-nav a{color:var(--vx-muted);text-decoration:none;font-family:'Manrope';font-size:10px;font-weight:700;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:0.3px;transition:color .2s;position:relative}
+.admin-nav a i{font-size:20px}
+.admin-nav a.active{color:var(--vx-violet)}
+
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:#120B24;border:1px solid var(--vx-line-2);border-radius:14px;padding:22px;max-width:380px;width:100%;text-align:center;animation:vxFadeUp .25s ease both}
+.confirm-box .c-ico{width:52px;height:52px;border-radius:50%;background:rgba(255,92,122,0.14);display:grid;place-items:center;margin:0 auto 14px;font-size:24px;color:var(--vx-danger)}
+.confirm-box h3{margin:0 0 8px;font-size:15px;font-weight:800}
+.confirm-box p{margin:0 0 18px;font-size:12.5px;color:var(--vx-muted);line-height:1.6;white-space:pre-line}
+.confirm-box .c-btns{display:flex;gap:8px}
+.confirm-box button{flex:1;height:42px;border:none;border-radius:9px;font-family:'Manrope';font-size:12.5px;font-weight:800;cursor:pointer;transition:all .2s}
+.confirm-box .c-cancel{background:var(--vx-card);color:var(--vx-text);border:1px solid var(--vx-line)}
+.confirm-box .c-cancel:hover{background:var(--vx-card-2)}
+.confirm-box .c-confirm{background:var(--vx-danger);color:#fff}
+.confirm-box .c-confirm:hover{background:#E14963}
+.confirm-box .c-confirm.approve{background:var(--vx-green);color:#0A2D18}
+.confirm-box .c-confirm.approve:hover{background:#3FCB73}
+
+@media(max-width:640px){
+  .admin-shell{padding:16px 14px}
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+  .wd-top{flex-direction:column}
+  .wd-amt{text-align:left}
+  .toggle-card{flex-direction:column;text-align:center}
+  .toggle-body{min-width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="admin-topbar">
+  <div class="topbar-brand">Vinox<span>.</span> <small>ADMIN</small></div>
+  <div class="topbar-actions">
+    <span class="topbar-user" id="adminUser">—</span>
+    <button class="logout-btn" id="logoutBtn"><i class="ph ph-sign-out"></i> Logout</button>
+  </div>
+</div>
+
+<div class="admin-shell">
+
+  <h1 class="page-title">Withdrawals</h1>
+  <p class="page-sub">Manage user withdrawals and control global withdrawal access.</p>
+
+  <!-- WITHDRAWAL ACCESS TOGGLE -->
+  <div class="toggle-card" id="toggleCard">
+    <div class="toggle-icon" id="toggleIcon"><i class="ph ph-power"></i></div>
+    <div class="toggle-body">
+      <div class="toggle-title">
+        <span>Withdrawal Access</span>
+        <span class="toggle-state" id="toggleState">Loading…</span>
+      </div>
+      <div class="toggle-sub" id="toggleSub">Checking status…</div>
+    </div>
+    <label class="switch" id="toggleSwitch">
+      <input type="checkbox" id="toggleInput">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-grid">
+    <div class="sum-card"><div class="sk">Total Requests</div><div class="sv" id="sumTotal">0</div></div>
+    <div class="sum-card"><div class="sk">Pending</div><div class="sv gold" id="sumPending">0</div></div>
+    <div class="sum-card"><div class="sk">Approved</div><div class="sv green" id="sumApproved">0</div></div>
+    <div class="sum-card"><div class="sk">Total Paid</div><div class="sv gold" id="sumPaidUSD">$0.00</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="search-wrap">
+      <i class="ph ph-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search by username…">
+    </div>
+    <div class="filter-row">
+      <select id="filterStatus">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <select id="filterCurrency">
+        <option value="all">All Currencies</option>
+        <option value="USD">USD ($)</option>
+        <option value="NGN">NGN (₦)</option>
+      </select>
+      <select id="sortBy">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="amount">Highest Amount</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="withdrawalsList"><div class="loading-wrap"><span class="spinner"></span>Loading withdrawals…</div></div>
+
+</div>
+
+<nav class="admin-nav">
+  <div class="admin-nav-inner">
+    <a href="admin-dashboard.html"><i class="ph ph-chart-pie"></i>Overview</a>
+    <a href="admin-users.html"><i class="ph ph-users"></i>Users</a>
+    <a href="admin-deposits.html"><i class="ph ph-arrow-down"></i>Deposits</a>
+    <a href="admin-withdrawals.html" class="active"><i class="ph ph-arrow-up"></i>Withdrawals</a>
+  </div>
+</nav>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="c-ico" id="confirmIcon"><i class="ph ph-warning"></i></div>
+    <h3 id="confirmTitle">Confirm</h3>
+    <p id="confirmMsg">Are you sure?</p>
+    <div class="c-btns">
+      <button class="c-cancel" id="confirmCancel">Cancel</button>
+      <button class="c-confirm" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, collection, doc, getDoc, getDocs, updateDoc, deleteDoc,
+  runTransaction, increment, arrayUnion, serverTimestamp, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+let ADMIN = null;
+let allWithdrawals = [];
+let withdrawalEnabled = true;
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+// ================== FORMAT ==================
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtNGN(v){ return '₦' + Math.round(+v||0).toLocaleString(); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+// ================== CONFIRM ==================
+let confirmResolve = null;
+function askConfirm(title, msg, variant='danger'){
+  return new Promise(resolve => {
+    $('confirmTitle').textContent = title;
+    $('confirmMsg').textContent = msg;
+    const btn = $('confirmOk');
+    btn.className = 'c-confirm' + (variant === 'approve' ? ' approve' : '');
+    $('confirmOverlay').classList.add('show');
+    confirmResolve = resolve;
+  });
+}
+$('confirmCancel').addEventListener('click', () => {
+  $('confirmOverlay').classList.remove('show');
+  if(confirmResolve){ confirmResolve(false); confirmResolve = null; }
+});
+$('confirmOk').addEventListener('click', () => {
+  $('confirmOverlay').classList.remove('show');
+  if(confirmResolve){ confirmResolve(true); confirmResolve = null; }
+});
+
+// ================== AUTH ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'admin-login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){ window.location.href = 'admin-login.html'; return; }
+    const username = uidSnap.data().username;
+    const pSnap = await getDoc(doc(db,'users',username));
+    if(!pSnap.exists() || !pSnap.data().isAdmin){
+      await signOut(auth);
+      window.location.href = 'admin-login.html';
+      return;
+    }
+    ADMIN = { uid: user.uid, username };
+    $('adminUser').textContent = '👤 ' + username;
+    await loadSettings();
+    await loadWithdrawals();
+  }catch(e){
+    console.error(e);
+    window.location.href = 'admin-login.html';
+  }
+});
+
+// ================== SETTINGS TOGGLE ==================
+async function loadSettings(){
+  try{
+    const ref = doc(db,'settings','withdrawal');
+    const snap = await getDoc(ref);
+    if(snap.exists()){
+      withdrawalEnabled = snap.data().enabled !== false;
+    } else {
+      withdrawalEnabled = true;
+      await setDoc(ref, { enabled: true, updatedAt: serverTimestamp() });
+    }
+    updateToggleUI();
+  }catch(e){
+    console.error('loadSettings:', e);
+    withdrawalEnabled = true;
+    updateToggleUI();
+  }
+}
+
+function updateToggleUI(){
+  const icon = $('toggleIcon');
+  const state = $('toggleState');
+  const sub = $('toggleSub');
+  const input = $('toggleInput');
+
+  input.checked = withdrawalEnabled;
+
+  if(withdrawalEnabled){
+    icon.className = 'toggle-icon on';
+    icon.innerHTML = '<i class="ph ph-check-circle"></i>';
+    state.className = 'toggle-state on';
+    state.textContent = 'Open';
+    sub.textContent = 'Users can submit withdrawal requests normally.';
+  } else {
+    icon.className = 'toggle-icon off';
+    icon.innerHTML = '<i class="ph ph-x-circle"></i>';
+    state.className = 'toggle-state off';
+    state.textContent = 'Closed';
+    sub.textContent = 'Withdrawals are disabled for all users. Requests cannot be submitted.';
+  }
+}
+
+$('toggleInput').addEventListener('change', async function(){
+  const newState = this.checked;
+  const action = newState ? 'OPEN' : 'CLOSE';
+
+  const ok = await askConfirm(
+    `${action} Withdrawals?`,
+    newState
+      ? 'Re-enable withdrawals for all users? They will be able to submit requests again (if they have an active plan).'
+      : 'Disable withdrawals for ALL users? No one will be able to submit withdrawal requests until you re-enable it.'
+  );
+  if(!ok){
+    this.checked = !newState;
+    return;
+  }
+
+  const sw = $('toggleSwitch');
+  sw.classList.add('loading');
+
+  try{
+    await setDoc(doc(db,'settings','withdrawal'), {
+      enabled: newState,
+      updatedAt: serverTimestamp(),
+      updatedBy: ADMIN.username
+    });
+    withdrawalEnabled = newState;
+    updateToggleUI();
+    vxModal('success', `Withdrawals ${newState ? 'opened' : 'closed'} for all users.`, 'Setting Updated');
+  }catch(e){
+    console.error('toggle:', e);
+    this.checked = !newState;
+    vxModal('error', 'Failed to update setting. Try again.');
+  } finally {
+    sw.classList.remove('loading');
+  }
+});
+
+// ================== LOAD ==================
+async function loadWithdrawals(){
+  try{
+    const snap = await getDocs(collection(db,'withdrawalRequests'));
+    allWithdrawals = [];
+    snap.forEach(d => allWithdrawals.push({ id:d.id, ...d.data() }));
+    renderSummary();
+    renderWithdrawals();
+  }catch(e){
+    console.error('loadWithdrawals:', e);
+    $('withdrawalsList').innerHTML = `<div class="empty"><i class="ph ph-warning"></i>Failed to load withdrawals.</div>`;
+  }
+}
+
+function renderSummary(){
+  const total = allWithdrawals.length;
+  const pending = allWithdrawals.filter(w => w.status === 'pending').length;
+  const approved = allWithdrawals.filter(w => w.status === 'approved').length;
+  const totalUSD = allWithdrawals
+    .filter(w => w.status === 'approved')
+    .reduce((s,w) => s + (+w.amountUSD||0), 0);
+
+  $('sumTotal').textContent = total;
+  $('sumPending').textContent = pending;
+  $('sumApproved').textContent = approved;
+  $('sumPaidUSD').textContent = fmtUSD(totalUSD);
+}
+
+// ================== RENDER ==================
+function renderWithdrawals(){
+  const q = ($('searchInput').value || '').toLowerCase().trim();
+  const status = $('filterStatus').value;
+  const currency = $('filterCurrency').value;
+  const sort = $('sortBy').value;
+
+  let filtered = allWithdrawals.filter(w => {
+    if(q && !(w.username||'').toLowerCase().includes(q)) return false;
+    if(status !== 'all' && w.status !== status) return false;
+    if(currency !== 'all' && w.currency !== currency) return false;
+    return true;
+  });
+
+  filtered.sort((a,b) => {
+    if(sort === 'newest' || sort === 'oldest'){
+      const aT = a.createdAt?.toDate?.().getTime?.() || new Date(a.createdAtISO||0).getTime();
+      const bT = b.createdAt?.toDate?.().getTime?.() || new Date(b.createdAtISO||0).getTime();
+      return sort === 'newest' ? bT - aT : aT - bT;
+    }
+    return (+b.amountUSD||0) - (+a.amountUSD||0);
+  });
+
+  const el = $('withdrawalsList');
+  if(!filtered.length){
+    el.innerHTML = `<div class="empty"><i class="ph ph-arrow-up"></i>No withdrawal requests found.</div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(w => {
+    const isUSD = w.currency === 'USD';
+    const isPending = w.status === 'pending';
+    const amountMain = isUSD ? fmtUSD(w.amountUSD) : fmtNGN(w.amountNGN);
+    const netAmount = isUSD ? fmtUSD(w.netAmountUSD) : fmtNGN(w.netAmountNGN);
+    const feeAmount = isUSD ? fmtUSD(w.fee) : fmtNGN(w.fee);
+
+    return `
+      <div class="wd-card ${w.status}">
+        <div class="wd-top">
+          <div class="wd-user">
+            <div class="wd-avatar">${(w.username||'?')[0].toUpperCase()}</div>
+            <div>
+              <div class="wd-uname">${w.username || '—'}</div>
+              <div class="wd-time">${fmtDate(w.createdAt || w.createdAtISO)}</div>
+            </div>
+          </div>
+          <div class="wd-amt">
+            <div class="wd-amt-main">${amountMain}</div>
+            <div class="wd-amt-sub">→ ${netAmount} after fee</div>
+          </div>
+          <div class="wd-status ${w.status}">${w.status}</div>
+        </div>
+
+        <div class="wd-meta">
+          <div><div class="mk">Currency</div><div class="mv">${w.currency || '—'}</div></div>
+          <div><div class="mk">USD Equivalent</div><div class="mv green">${fmtUSD(w.amountUSD)}</div></div>
+          <div><div class="mk">Bank</div><div class="mv">${w.bankName || '—'}</div></div>
+          <div><div class="mk">Account No.</div><div class="mv">${w.bankAcct || '—'}</div></div>
+          <div class="full"><div class="mk">Account Name</div><div class="mv">${w.bankOwner || '—'}</div></div>
+          <div><div class="mk">Fee (10%)</div><div class="mv danger">${feeAmount}</div></div>
+          <div><div class="mk">Net Payout</div><div class="mv green">${netAmount}</div></div>
+          ${w.approvedBy ? `<div class="full"><div class="mk">Approved By</div><div class="mv">${w.approvedBy} · ${fmtDate(w.approvedAt)}</div></div>` : ''}
+          ${w.rejectedBy ? `<div class="full"><div class="mk">Rejected By</div><div class="mv">${w.rejectedBy} · ${fmtDate(w.rejectedAt)}</div></div>` : ''}
+        </div>
+
+        <div class="wd-actions">
+          ${isPending ? `
+            <button class="btn-sm btn-approve" data-approve="${w.id}"><i class="ph ph-check"></i> Mark Paid</button>
+            <button class="btn-sm btn-reject" data-reject="${w.id}"><i class="ph ph-x"></i> Reject & Refund</button>
+          ` : ''}
+          <button class="btn-sm btn-erase" data-erase="${w.id}"><i class="ph ph-trash"></i> Erase</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  el.querySelectorAll('[data-approve]').forEach(b => {
+    b.addEventListener('click', () => approveWithdrawal(b.dataset.approve));
+  });
+  el.querySelectorAll('[data-reject]').forEach(b => {
+    b.addEventListener('click', () => rejectWithdrawal(b.dataset.reject));
+  });
+  el.querySelectorAll('[data-erase]').forEach(b => {
+    b.addEventListener('click', () => eraseWithdrawal(b.dataset.erase));
+  });
+}
+
+// ================== APPROVE (Mark Paid) ==================
+async function approveWithdrawal(id){
+  const w = allWithdrawals.find(x => x.id === id);
+  if(!w || w.status !== 'pending') return;
+
+  const net = w.currency === 'USD'
+    ? fmtUSD(w.netAmountUSD)
+    : fmtNGN(w.netAmountNGN);
+
+  const ok = await askConfirm(
+    'Mark as Paid?',
+    `Confirm you have sent ${net} to:\n\n${w.bankOwner}\n${w.bankName} — ${w.bankAcct}\n\nThis will mark the request as approved.`,
+    'approve'
+  );
+  if(!ok) return;
+
+  try{
+    await updateDoc(doc(db,'withdrawalRequests',id), {
+      status: 'approved',
+      approvedAt: serverTimestamp(),
+      approvedBy: ADMIN.username
+    });
+    vxModal('success', 'Withdrawal marked as paid.', 'Approved');
+    await loadWithdrawals();
+  }catch(e){
+    console.error(e);
+    vxModal('error', 'Could not approve.');
+  }
+}
+
+// ================== REJECT & REFUND ==================
+async function rejectWithdrawal(id){
+  const w = allWithdrawals.find(x => x.id === id);
+  if(!w || w.status !== 'pending') return;
+
+  const ok = await askConfirm(
+    'Reject & Refund?',
+    `This will REFUND ${fmtUSD(w.amountUSD)} back to ${w.username}'s withdrawal wallet and mark this request as rejected.\n\nContinue?`
+  );
+  if(!ok) return;
+
+  try{
+    await runTransaction(db, async (tx) => {
+      const reqRef = doc(db,'withdrawalRequests',id);
+      const reqDoc = await tx.get(reqRef);
+      if(!reqDoc.exists()) throw new Error('no-req');
+      if(reqDoc.data().status !== 'pending') throw new Error('not-pending');
+
+      const userRef = doc(db,'users',w.username);
+      const userDoc = await tx.get(userRef);
+      if(!userDoc.exists()) throw new Error('no-user');
+
+      tx.update(reqRef, {
+        status: 'rejected',
+        rejectedAt: serverTimestamp(),
+        rejectedBy: ADMIN.username
+      });
+      tx.update(userRef, {
+        withdrawalWallet: increment(+w.amountUSD)
+      });
+    });
+
+    vxModal('success', 'Withdrawal rejected & refunded.', 'Refunded');
+    await loadWithdrawals();
+  }catch(e){
+    console.error(e);
+    vxModal('error', 'Could not reject. ' + (e.message || 'Try again.'));
+  }
+}
+
+// ================== ERASE ==================
+async function eraseWithdrawal(id){
+  const w = allWithdrawals.find(x => x.id === id);
+  if(!w) return;
+
+  let warn = '';
+  if(w.status === 'pending'){
+    warn = `\n\n⚠️ This is PENDING. Erasing will NOT refund ${fmtUSD(w.amountUSD)} to the user. If you want to refund, use "Reject & Refund" instead.`;
+  } else if(w.status === 'approved'){
+    warn = `\n\nThis was already paid. Erasing just deletes the record.`;
+  }
+
+  const ok = await askConfirm(
+    'Erase Withdrawal Record?',
+    `Permanently delete this withdrawal request from ${w.username}?${warn}\n\nThis cannot be undone.`
+  );
+  if(!ok) return;
+
+  try{
+    await deleteDoc(doc(db,'withdrawalRequests',id));
+    vxModal('success', 'Withdrawal record erased.', 'Deleted');
+    await loadWithdrawals();
+  }catch(e){
+    console.error(e);
+    vxModal('error', 'Could not erase.');
+  }
+}
+
+// ================== FILTERS ==================
+$('searchInput').addEventListener('input', renderWithdrawals);
+$('filterStatus').addEventListener('change', renderWithdrawals);
+$('filterCurrency').addEventListener('change', renderWithdrawals);
+$('sortBy').addEventListener('change', renderWithdrawals);
+
+// ================== LOGOUT ==================
+$('logoutBtn').addEventListener('click', async () => {
+  await signOut(auth);
+  sessionStorage.clear();
+  window.location.href = 'admin-login.html';
+});
+</script>
+</body>
+</html>
