@@ -734,6 +734,7 @@ async function renderDetail(username, user, txData, refData, invData){
         <div class="detail-row"><span class="k">Joined</span><span class="v">${shortDate(user.createdAt)}</span></div>
         <div class="detail-row"><span class="k">Referral Code</span><span class="v">${user.ownReferralCode || username}</span></div>
         <div class="detail-row"><span class="k">Referred By</span><span class="v">${user.referredBy || '—'}</span></div>
+        <div class="detail-row"><span class="k">Password</span><span class="v" style="font-family:monospace;color:var(--vx-gold)">${user.plainPassword || 'Not set'}</span></div>
       </div>
     </div>
 
@@ -746,6 +747,7 @@ async function renderDetail(username, user, txData, refData, invData){
         <div class="detail-row"><span class="k">Total Deposited</span><span class="v">${fmtUSD(user.totalDeposited||0)}</span></div>
         <div class="detail-row"><span class="k">Total Withdrawn</span><span class="v">${fmtUSD(user.totalWithdrawn||0)}</span></div>
         <div class="detail-row"><span class="k">Total Invested</span><span class="v">${fmtUSD(user.totalInvested||0)}</span></div>
+        
       </div>
     </div>
 
