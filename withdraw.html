@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Vinox — Withdraw</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<meta name="theme-color" content="#0B0716">
+
+<style>
+:root{
+  --vx-bg:#0B0716;
+  --vx-card:rgba(255,255,255,0.03);
+  --vx-card-2:rgba(255,255,255,0.05);
+  --vx-line:rgba(168,132,255,0.14);
+  --vx-line-2:rgba(168,132,255,0.28);
+  --vx-text:#F3EEFF;
+  --vx-muted:#9A8FB8;
+  --vx-muted-2:#6E6390;
+  --vx-violet:#A855F7;
+  --vx-gold:#F5C86B;
+  --vx-green:#4ADE80;
+  --vx-danger:#FF5C7A;
+}
+html,body{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;background:var(--vx-bg);color:var(--vx-text)}
+*,*::before,*::after{box-sizing:inherit}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+@keyframes vxSpin{to{transform:rotate(360deg)}}
+@keyframes vxFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(700px 400px at 15% -5%,rgba(168,85,247,0.12),transparent 60%),
+    radial-gradient(700px 400px at 100% 100%,rgba(245,200,107,0.07),transparent 60%),
+    #0B0716}
+
+.vx-shell{width:100%;max-width:460px;margin:0 auto;flex:1;padding:20px 18px 32px}
+
+.vx-top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.vx-back{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:9px;width:36px;height:36px;display:grid;place-items:center;color:var(--vx-text);cursor:pointer;transition:all .2s;text-decoration:none}
+.vx-back:hover{background:var(--vx-card-2);border-color:var(--vx-line-2)}
+.vx-back i{font-size:18px}
+.vx-title{font-size:17px;font-weight:800;letter-spacing:-0.3px}
+
+.vx-balance-mini{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:12px 14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.vx-balance-mini .k{color:var(--vx-muted);font-weight:500}
+.vx-balance-mini .v{font-weight:800;color:var(--vx-green)}
+
+/* lock card */
+.vx-lock{background:rgba(255,92,122,0.06);border:1px solid rgba(255,92,122,0.28);border-radius:12px;padding:16px;margin-bottom:18px;text-align:center;animation:vxFadeUp .4s ease both}
+.vx-lock i{font-size:30px;color:var(--vx-danger);display:block;margin-bottom:8px}
+.vx-lock .lk-t{font-size:13px;font-weight:800;color:var(--vx-text);margin-bottom:4px}
+.vx-lock .lk-s{font-size:11.5px;color:var(--vx-muted);line-height:1.5}
+
+/* pending card */
+.vx-pending-card{background:rgba(245,200,107,0.06);border:1px solid rgba(245,200,107,0.3);border-radius:12px;padding:14px;margin-bottom:18px;animation:vxFadeUp .4s ease both}
+.vx-pending-card .pc-h{font-size:11px;font-weight:800;color:var(--vx-gold);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.vx-pending-card .pc-h i{font-size:14px}
+.vx-pending-card .pc-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.vx-pending-card .pc-row:last-child{margin-bottom:0}
+.vx-pending-card .pc-row .k{color:var(--vx-muted);font-weight:500}
+.vx-pending-card .pc-row .v{font-weight:700;color:var(--vx-text)}
+
+/* tabs */
+.vx-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;background:var(--vx-card);padding:4px;border-radius:11px;border:1px solid var(--vx-line)}
+.vx-tab{background:none;border:none;color:var(--vx-muted);font-family:'Manrope';font-size:12.5px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.vx-tab i{font-size:15px}
+.vx-tab.active{background:var(--vx-violet);color:#fff}
+
+/* fields */
+.vx-field{position:relative;margin-bottom:12px}
+.vx-field label{display:block;font-size:10.5px;font-weight:700;color:var(--vx-muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;padding-left:2px}
+.vx-field input{width:100%;height:50px;padding:0 14px;background:var(--vx-card);border:1px solid var(--vx-line);border-radius:10px;font-family:'Manrope';font-size:13.5px;font-weight:500;color:var(--vx-text);outline:none;transition:border-color .2s}
+.vx-field input::placeholder{color:var(--vx-muted-2)}
+.vx-field input:focus{border-color:var(--vx-violet);background:rgba(255,255,255,0.05)}
+
+.vx-amount-wrap{position:relative}
+.vx-amount-wrap input{padding-right:64px;font-size:16px;font-weight:700}
+.vx-amount-suffix{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:800;color:var(--vx-muted);pointer-events:none}
+
+.vx-conv{background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.2);border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:11.5px;color:var(--vx-muted);font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.vx-conv strong{color:var(--vx-gold);font-weight:800}
+.vx-conv .conv-val{color:var(--vx-green);font-weight:800}
+
+/* fee summary */
+.vx-fee-summary{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:13px 14px;margin-bottom:16px}
+.vx-fee-summary .fs-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px}
+.vx-fee-summary .fs-row:last-child{margin-bottom:0;padding-top:8px;border-top:1px solid rgba(168,132,255,0.1)}
+.vx-fee-summary .fs-row .k{color:var(--vx-muted);font-weight:500}
+.vx-fee-summary .fs-row .v{font-weight:700;color:var(--vx-text)}
+.vx-fee-summary .fs-row.fee .v{color:var(--vx-danger)}
+.vx-fee-summary .fs-row.total .v{color:var(--vx-green);font-size:14px;font-weight:800}
+
+/* info */
+.vx-info{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:11px;padding:13px 14px;margin-bottom:14px;font-size:11.5px;color:var(--vx-muted);line-height:1.6;font-weight:500}
+.vx-info i{color:var(--vx-gold);margin-right:5px}
+
+/* button */
+.vx-btn{width:100%;height:52px;margin-top:8px;border:none;border-radius:10px;background:var(--vx-violet);color:#fff;font-family:'Manrope';font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s}
+.vx-btn:hover:not(:disabled){background:#9333EA}
+.vx-btn:disabled{opacity:.5;cursor:not-allowed}
+.vx-spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:vxSpin .7s linear infinite;display:inline-block}
+
+.vx-section{display:none;animation:vxFadeUp .3s ease both}
+.vx-section.active{display:block}
+
+.vx-note{font-size:11px;color:var(--vx-muted-2);text-align:center;margin-top:14px;line-height:1.5;padding:0 10px}
+
+/* pending list */
+.vx-pending{background:var(--vx-card);border:1px solid var(--vx-line);border-radius:12px;padding:13px;margin-bottom:10px}
+.vx-pending-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.vx-pending-amt{font-size:14px;font-weight:800;color:var(--vx-text)}
+.vx-pending-status{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:5px;letter-spacing:0.4px;text-transform:uppercase}
+.vx-pending-status.pending{background:rgba(245,200,107,0.14);color:var(--vx-gold)}
+.vx-pending-status.approved{background:rgba(74,222,128,0.14);color:var(--vx-green)}
+.vx-pending-status.rejected{background:rgba(255,92,122,0.14);color:var(--vx-danger)}
+.vx-pending-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--vx-muted);font-weight:500;margin-top:5px}
+.vx-empty{text-align:center;padding:22px 16px;color:var(--vx-muted);font-size:12px;background:var(--vx-card);border:1px dashed var(--vx-line);border-radius:11px}
+
+#vx-modal-layer{position:fixed;top:14px;left:14px;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none;max-width:min(320px,calc(100vw - 28px))}
+.vx-modal{position:relative;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:#171029;border:1px solid var(--vx-line-2);box-shadow:0 10px 28px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;overflow:hidden;transform:translateX(-24px);opacity:0;transition:transform .3s ease,opacity .25s ease}
+.vx-modal.show{transform:none;opacity:1}
+.vx-modal .m-ico{font-size:18px;color:var(--c);flex-shrink:0;padding-top:1px}
+.vx-modal .m-body{flex:1;min-width:0}
+.vx-modal .m-title{font-size:10px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.vx-modal .m-msg{font-size:12px;font-weight:500;color:var(--vx-text);line-height:1.4}
+.vx-modal .m-bar{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--c);opacity:.8;transform-origin:left;animation:vxBar 4.4s linear forwards}
+@keyframes vxBar{to{transform:scaleX(0)}}
+
+@media(max-width:380px){
+  .vx-shell{padding:16px 14px}
+}
+</style>
+</head>
+<body>
+
+<main class="vx-shell">
+
+  <div class="vx-top">
+    <a href="dashboard.html" class="vx-back"><i class="ph ph-arrow-left"></i></a>
+    <div class="vx-title">Withdraw</div>
+  </div>
+
+  <div class="vx-balance-mini">
+    <span class="k">Withdrawal Wallet Balance</span>
+    <span class="v" id="vxCurBalance">$0.00</span>
+  </div>
+
+  <!-- Time Locked State -->
+  <div class="vx-lock" id="vxTimeLock" style="display:none">
+    <i class="ph ph-clock"></i>
+    <div class="lk-t">Withdrawals Closed</div>
+    <div class="lk-s" id="vxTimeMsg">Withdrawal is only available between <strong>9:00 AM and 5:00 PM</strong> daily (except Sundays).</div>
+  </div>
+
+  <!-- Investment Locked State -->
+  <div class="vx-lock" id="vxLock" style="display:none">
+    <i class="ph ph-lock"></i>
+    <div class="lk-t">Withdrawal Locked</div>
+    <div class="lk-s">You need at least one <strong>active investment plan</strong> to enable withdrawals.</div>
+  </div>
+
+  <!-- Pending State -->
+  <div class="vx-pending-card" id="vxPendingCard" style="display:none">
+    <div class="pc-h"><i class="ph ph-clock"></i> Withdrawal In Progress</div>
+    <div class="pc-row"><span class="k">Amount</span><span class="v" id="pcAmt">—</span></div>
+    <div class="pc-row"><span class="k">Method</span><span class="v" id="pcMethod">—</span></div>
+    <div class="pc-row"><span class="k">Requested</span><span class="v" id="pcDate">—</span></div>
+    <div class="pc-row"><span class="k">Status</span><span class="v" style="color:var(--vx-gold)">Pending Admin Approval</span></div>
+  </div>
+
+  <!-- Withdrawal form -->
+  <div id="vxFormWrap">
+
+    <div class="vx-tabs">
+      <button class="vx-tab active" data-tab="usd"><i class="ph ph-currency-btc"></i> USDT (BEP20)</button>
+      <button class="vx-tab" data-tab="ngn"><i class="ph ph-bank"></i> Bank (₦)</button>
+    </div>
+
+    <!-- ===== USD / USDT ===== -->
+    <section class="vx-section active" id="section-usd">
+
+      <div class="vx-field">
+        <label>Amount (USD)</label>
+        <div class="vx-amount-wrap">
+          <input type="number" id="usdAmount" placeholder="0.00" min="1" step="0.01" inputmode="decimal">
+          <span class="vx-amount-suffix">USD</span>
+        </div>
+      </div>
+
+      <div class="vx-fee-summary" id="usdFee" style="display:none">
+        <div class="fs-row"><span class="k">Amount</span><span class="v" id="usdFeeAmount">$0.00</span></div>
+        <div class="fs-row fee"><span class="k">Fee (10%)</span><span class="v" id="usdFeeFee">−$0.00</span></div>
+        <div class="fs-row total"><span class="k">You Receive</span><span class="v" id="usdFeeTotal">$0.00</span></div>
+      </div>
+
+      <div class="vx-field">
+        <label>USDT (BEP20) Address</label>
+        <input type="text" id="usdWalletAddress" placeholder="Enter your BEP20 wallet address" autocomplete="off" style="font-family:monospace">
+      </div>
+      <div class="vx-field">
+        <label>Trade PIN (6 digits)</label>
+        <input type="tel" id="usdTradePin" placeholder="••••••" maxlength="6" inputmode="numeric" autocomplete="off" style="letter-spacing:6px;text-align:center">
+      </div>
+
+      <button class="vx-btn" id="usdSubmit">
+        <span id="usdBtnText">Request USDT Withdrawal</span>
+      </button>
+
+      <div class="vx-note">Withdrawals are processed after admin approval. Once per day. Min: $1.00.</div>
+    </section>
+
+    <!-- ===== NGN ===== -->
+    <section class="vx-section" id="section-ngn">
+
+      <div class="vx-field">
+        <label>Amount (₦)</label>
+        <div class="vx-amount-wrap">
+          <input type="number" id="ngnAmount" placeholder="1500" min="1500" step="100" inputmode="numeric">
+          <span class="vx-amount-suffix">NGN</span>
+        </div>
+      </div>
+
+      <div class="vx-conv" id="ngnConv" style="display:none">
+        <span>Deducted from wallet</span>
+        <span class="conv-val" id="ngnConvVal">$0.00</span>
+      </div>
+
+      <div class="vx-fee-summary" id="ngnFee" style="display:none">
+        <div class="fs-row"><span class="k">Amount</span><span class="v" id="ngnFeeAmount">₦0</span></div>
+        <div class="fs-row fee"><span class="k">Fee (10%)</span><span class="v" id="ngnFeeFee">−₦0</span></div>
+        <div class="fs-row total"><span class="k">You Receive</span><span class="v" id="ngnFeeTotal">₦0</span></div>
+      </div>
+
+      <div class="vx-field">
+        <label>Bank Name</label>
+        <input type="text" id="ngnBankName" placeholder="e.g. GTBank" autocomplete="off">
+      </div>
+      <div class="vx-field">
+        <label>Account Number</label>
+        <input type="tel" id="ngnBankAcct" placeholder="10 digits" maxlength="10" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="vx-field">
+        <label>Account Name</label>
+        <input type="text" id="ngnBankOwner" placeholder="Name on your bank account" autocomplete="off">
+      </div>
+      <div class="vx-field">
+        <label>Trade PIN (6 digits)</label>
+        <input type="tel" id="ngnTradePin" placeholder="••••••" maxlength="6" inputmode="numeric" autocomplete="off" style="letter-spacing:6px;text-align:center">
+      </div>
+
+      <button class="vx-btn" id="ngnSubmit">
+        <span id="ngnBtnText">Request Naira Withdrawal</span>
+      </button>
+
+      <div class="vx-note">Withdrawals are processed after admin approval. Once per day. Min: ₦1,500. Rate: $1 = ₦1,500.</div>
+    </section>
+
+  </div>
+
+  <!-- pending list -->
+  <div style="font-size:13px;font-weight:800;margin:22px 0 12px;display:flex;justify-content:space-between;align-items:center">
+    <span>Recent Withdrawals</span>
+    <small style="font-size:11px;color:var(--vx-muted);font-weight:600" id="vxHistoryCount">0</small>
+  </div>
+  <div id="vxHistoryList"></div>
+
+</main>
+
+<div id="vx-modal-layer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs,
+  serverTimestamp, runTransaction, increment
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJaVOCaeTJR4gkct1vKwrO3pbdZk1bXoQ",
+  authDomain: "vinox-35d0d.firebaseapp.com",
+  projectId: "vinox-35d0d",
+  storageBucket: "vinox-35d0d.firebasestorage.app",
+  messagingSenderId: "300010165609",
+  appId: "1:300010165609:web:594b8652dce6a8ca1259f8"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+const RATE = 1500;
+const FEE_RATE = 0.10;
+const MIN_USD = 1;
+const MIN_NGN = 1500;
+
+let ME = null;
+let PROFILE = null;
+let hasActiveInvestment = false;
+let hasPendingWithdrawal = false;
+
+// ================== MODAL ==================
+const MODAL_THEMES = {
+  success:{icon:'ph-check-circle',color:'#4ADE80',title:'Success'},
+  error:{icon:'ph-x-circle',color:'#FF5C7A',title:'Error'},
+  warning:{icon:'ph-warning-circle',color:'#F5C86B',title:'Notice'},
+  info:{icon:'ph-info',color:'#A855F7',title:'Info'}
+};
+function vxModal(type, msg, title){
+  const layer = $('vx-modal-layer');
+  const th = MODAL_THEMES[type] || MODAL_THEMES.info;
+  while(layer.children.length >= 3) layer.firstChild.remove();
+  const m = document.createElement('div');
+  m.className = 'vx-modal';
+  m.style.setProperty('--c', th.color);
+  m.innerHTML = `<div class="m-ico"><i class="ph ${th.icon}"></i></div>
+    <div class="m-body"><div class="m-title">${title||th.title}</div><div class="m-msg"></div></div>
+    <span class="m-bar"></span>`;
+  m.querySelector('.m-msg').textContent = msg;
+  const kill = () => { m.classList.remove('show'); setTimeout(()=>m.remove(),300); };
+  m.addEventListener('click', kill);
+  layer.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  setTimeout(kill, 4400);
+}
+
+function fmtUSD(v){ return '$' + (+v||0).toFixed(2); }
+function fmtNGN(v){ return '₦' + Math.round(+v||0).toLocaleString(); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric', hour:'2-digit', minute:'2-digit'});
+}
+
+// ================== TIME CHECK ==================
+function checkWithdrawalTime() {
+  const now = new Date();
+  const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+
+  // Sundays are disabled
+  if (day === 0) {
+    return { allowed: false, msg: "Withdrawals are closed on Sundays. Please try again on Monday between 9:00 AM and 5:00 PM." };
+  }
+
+  // Time window: 9:00 AM to 5:00 PM
+  if (hour < 9) {
+    return { allowed: false, msg: "Withdrawals open at 9:00 AM. Please come back later." };
+  }
+  if (hour >= 17) {
+    return { allowed: false, msg: "Withdrawals close at 5:00 PM. Please come back tomorrow." };
+  }
+
+  if (hour === 17 && minute >= 0) {
+    return { allowed: false, msg: "Withdrawals close at 5:00 PM. Please come back tomorrow." };
+  }
+
+  return { allowed: true };
+}
+
+// ================== AUTH ==================
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = 'login.html'; return; }
+  try{
+    const uidSnap = await getDoc(doc(db,'usersByUid',user.uid));
+    if(!uidSnap.exists()){ window.location.href = 'login.html'; return; }
+    ME = { uid: user.uid, username: uidSnap.data().username };
+    await loadAll();
+  }catch(e){
+    console.error(e);
+    vxModal('error','Failed to load withdraw page.');
+  }
+});
+
+async function loadAll(){
+  // profile
+  const pSnap = await getDoc(doc(db,'users',ME.username));
+  PROFILE = pSnap.exists() ? pSnap.data() : {};
+  $('vxCurBalance').textContent = fmtUSD(PROFILE.withdrawalWallet || 0);
+
+  // check active investment
+  const invSnap = await getDoc(doc(db,'investments',ME.username));
+  const invs = invSnap.exists() ? (invSnap.data().activeInvestments || []) : [];
+  hasActiveInvestment = invs.some(i => i.status === 'active');
+
+  // check pending withdrawal
+  const q = query(collection(db,'withdrawalRequests'), where('username','==',ME.username));
+  const snap = await getDocs(q);
+  const list = [];
+  snap.forEach(d => list.push({ id:d.id, ...d.data() }));
+
+  const pending = list.filter(r => r.status === 'pending');
+  hasPendingWithdrawal = pending.length > 0;
+
+  // Apply locks
+  const timeLockEl = $('vxTimeLock');
+  const lockEl = $('vxLock');
+  const pendEl = $('vxPendingCard');
+  const formEl = $('vxFormWrap');
+
+  timeLockEl.style.display = 'none';
+  lockEl.style.display = 'none';
+  pendEl.style.display = 'none';
+  formEl.style.display = 'block';
+
+  // 1. Check time restriction first
+  const timeStatus = checkWithdrawalTime();
+  if (!timeStatus.allowed) {
+    timeLockEl.style.display = 'block';
+    $('vxTimeMsg').innerHTML = timeStatus.msg;
+    formEl.style.display = 'none';
+  } 
+  // 2. Check active investment
+  else if(!hasActiveInvestment){
+    lockEl.style.display = 'block';
+    formEl.style.display = 'none';
+  } 
+  // 3. Check pending withdrawal
+  else if(hasPendingWithdrawal){
+    const p = pending[0];
+    $('pcAmt').textContent = p.currency === 'USD'
+      ? fmtUSD(p.amountUSD) + ' → ' + fmtUSD(p.netAmountUSD || 0)
+      : fmtNGN(p.amountNGN) + ' → ' + fmtNGN(p.netAmountNGN || 0);
+    $('pcMethod').textContent = p.currency === 'USD' ? 'USDT (BEP20)' : 'Bank Transfer (NGN)';
+    $('pcDate').textContent = fmtDate(p.createdAt || p.createdAtISO);
+    pendEl.style.display = 'block';
+    formEl.style.display = 'none';
+  }
+
+  // render history
+  list.sort((a,b) => {
+    const aT = a.createdAt?.toDate?.().getTime?.() || new Date(a.createdAtISO||0).getTime();
+    const bT = b.createdAt?.toDate?.().getTime?.() || new Date(b.createdAtISO||0).getTime();
+    return bT - aT;
+  });
+  renderHistory(list);
+}
+
+// ================== TABS ==================
+document.querySelectorAll('.vx-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.vx-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.vx-section').forEach(s => s.classList.remove('active'));
+    $('section-' + t.dataset.tab).classList.add('active');
+  });
+});
+
+// ================== USD INPUT ==================
+$('usdAmount').addEventListener('input', function(){
+  const v = parseFloat(this.value) || 0;
+  const box = $('usdFee');
+  if(v > 0){
+    box.style.display = 'block';
+    const fee = +(v * FEE_RATE).toFixed(2);
+    const net = +(v - fee).toFixed(2);
+    $('usdFeeAmount').textContent = fmtUSD(v);
+    $('usdFeeFee').textContent = '−' + fmtUSD(fee);
+    $('usdFeeTotal').textContent = fmtUSD(net);
+  } else {
+    box.style.display = 'none';
+  }
+});
+
+// ================== NGN INPUT ==================
+$('ngnAmount').addEventListener('input', function(){
+  const v = parseFloat(this.value) || 0;
+  const convEl = $('ngnConv');
+  const feeEl = $('ngnFee');
+  if(v > 0){
+    convEl.style.display = 'flex';
+    feeEl.style.display = 'block';
+    $('ngnConvVal').textContent = fmtUSD(v / RATE);
+    const fee = Math.round(v * FEE_RATE);
+    const net = Math.round(v - fee);
+    $('ngnFeeAmount').textContent = fmtNGN(v);
+    $('ngnFeeFee').textContent = '−' + fmtNGN(fee);
+    $('ngnFeeTotal').textContent = fmtNGN(net);
+  } else {
+    convEl.style.display = 'none';
+    feeEl.style.display = 'none';
+  }
+});
+
+// ================== USD SUBMIT (USDT) ==================
+let usdSubmitting = false;
+$('usdSubmit').addEventListener('click', async () => {
+  if(usdSubmitting) return;
+
+  const timeStatus = checkWithdrawalTime();
+  if (!timeStatus.allowed) return vxModal('warning', timeStatus.msg, 'Withdrawals Closed');
+
+  const amount = parseFloat($('usdAmount').value) || 0;
+  const walletAddress = $('usdWalletAddress').value.trim();
+  const pin = $('usdTradePin').value.trim();
+
+  if(amount < MIN_USD) return vxModal('warning', `Minimum withdrawal is ${fmtUSD(MIN_USD)}.`, 'Invalid Amount');
+  if(amount > +(PROFILE.withdrawalWallet || 0)) return vxModal('error','Insufficient withdrawal balance.', 'Insufficient Funds');
+  if(!walletAddress) return vxModal('warning','Enter your USDT (BEP20) address.', 'Missing Info');
+  if(!/^\d{6}$/.test(pin)) return vxModal('warning','Trade PIN must be 6 digits.', 'Invalid PIN');
+
+  if(pin !== PROFILE.tradePassword) return vxModal('error','Incorrect trade PIN.', 'Wrong PIN');
+
+  usdSubmitting = true;
+  const btn = $('usdSubmit');
+  btn.disabled = true;
+  $('usdBtnText').innerHTML = '<span class="vx-spinner"></span> Submitting…';
+
+  try{
+    const fee = +(amount * FEE_RATE).toFixed(2);
+    const net = +(amount - fee).toFixed(2);
+
+    await runTransaction(db, async (tx) => {
+      const uRef = doc(db,'users',ME.username);
+      const uDoc = await tx.get(uRef);
+      if(!uDoc.exists()) throw new Error('no-user');
+      const u = uDoc.data();
+      if((u.withdrawalWallet || 0) < amount) throw new Error('insufficient');
+
+      tx.update(uRef, {
+        withdrawalWallet: +((u.withdrawalWallet || 0) - amount).toFixed(4),
+        totalWithdrawn: increment(amount)
+      });
+    });
+
+    await addDoc(collection(db,'withdrawalRequests'), {
+      username: ME.username,
+      uid: ME.uid,
+      currency: 'USD',
+      method: 'usdt_bep20',
+      amountUSD: +amount.toFixed(2),
+      fee: fee,
+      feeRate: FEE_RATE,
+      netAmountUSD: net,
+      walletAddress: walletAddress,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+      createdAtISO: new Date().toISOString()
+    });
+
+    vxModal('success', 'USDT withdrawal request submitted! Awaiting admin approval.', 'Request Sent');
+
+    $('usdAmount').value = '';
+    $('usdWalletAddress').value = '';
+    $('usdTradePin').value = '';
+    $('usdFee').style.display = 'none';
+
+    await loadAll();
+  }catch(e){
+    console.error(e);
+    if(String(e.message).includes('insufficient')){
+      vxModal('error','Insufficient balance.');
+    } else {
+      vxModal('error','Could not submit. Try again.');
+    }
+  } finally {
+    usdSubmitting = false;
+    btn.disabled = false;
+    $('usdBtnText').textContent = 'Request USDT Withdrawal';
+  }
+});
+
+// ================== NGN SUBMIT ==================
+let ngnSubmitting = false;
+$('ngnSubmit').addEventListener('click', async () => {
+  if(ngnSubmitting) return;
+
+  const timeStatus = checkWithdrawalTime();
+  if (!timeStatus.allowed) return vxModal('warning', timeStatus.msg, 'Withdrawals Closed');
+
+  const amountNGN = parseFloat($('ngnAmount').value) || 0;
+  const bankName = $('ngnBankName').value.trim();
+  const bankAcct = $('ngnBankAcct').value.trim();
+  const bankOwner = $('ngnBankOwner').value.trim();
+  const pin = $('ngnTradePin').value.trim();
+
+  if(amountNGN < MIN_NGN) return vxModal('warning', `Minimum withdrawal is ${fmtNGN(MIN_NGN)}.`, 'Invalid Amount');
+
+  const amountUSD = +(amountNGN / RATE).toFixed(2);
+  if(amountUSD > +(PROFILE.withdrawalWallet || 0))
+    return vxModal('error','Insufficient withdrawal balance.', 'Insufficient Funds');
+
+  if(!bankName) return vxModal('warning','Enter your bank name.', 'Missing Info');
+  if(!/^\d{10}$/.test(bankAcct)) return vxModal('warning','Account number must be 10 digits.', 'Invalid Account');
+  if(!bankOwner) return vxModal('warning','Enter account name.', 'Missing Info');
+  if(!/^\d{6}$/.test(pin)) return vxModal('warning','Trade PIN must be 6 digits.', 'Invalid PIN');
+  if(pin !== PROFILE.tradePassword) return vxModal('error','Incorrect trade PIN.', 'Wrong PIN');
+
+  ngnSubmitting = true;
+  const btn = $('ngnSubmit');
+  btn.disabled = true;
+  $('ngnBtnText').innerHTML = '<span class="vx-spinner"></span> Submitting…';
+
+  try{
+    const fee = Math.round(amountNGN * FEE_RATE);
+    const net = Math.round(amountNGN - fee);
+
+    await runTransaction(db, async (tx) => {
+      const uRef = doc(db,'users',ME.username);
+      const uDoc = await tx.get(uRef);
+      if(!uDoc.exists()) throw new Error('no-user');
+      const u = uDoc.data();
+      if((u.withdrawalWallet || 0) < amountUSD) throw new Error('insufficient');
+
+      tx.update(uRef, {
+        withdrawalWallet: +((u.withdrawalWallet || 0) - amountUSD).toFixed(4),
+        totalWithdrawn: increment(amountUSD)
+      });
+    });
+
+    await addDoc(collection(db,'withdrawalRequests'), {
+      username: ME.username,
+      uid: ME.uid,
+      currency: 'NGN',
+      method: 'bank',
+      amountNGN: Math.round(amountNGN),
+      amountUSD: amountUSD,
+      rate: RATE,
+      fee: fee,
+      feeRate: FEE_RATE,
+      netAmountNGN: net,
+      bankName, bankAcct, bankOwner,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+      createdAtISO: new Date().toISOString()
+    });
+
+    vxModal('success', 'Naira withdrawal request submitted! Awaiting admin approval.', 'Request Sent');
+
+    $('ngnAmount').value = '';
+    $('ngnBankName').value = '';
+    $('ngnBankAcct').value = '';
+    $('ngnBankOwner').value = '';
+    $('ngnTradePin').value = '';
+    $('ngnConv').style.display = 'none';
+    $('ngnFee').style.display = 'none';
+
+    await loadAll();
+  }catch(e){
+    console.error(e);
+    if(String(e.message).includes('insufficient')){
+      vxModal('error','Insufficient balance.');
+    } else {
+      vxModal('error','Could not submit. Try again.');
+    }
+  } finally {
+    ngnSubmitting = false;
+    btn.disabled = false;
+    $('ngnBtnText').textContent = 'Request Naira Withdrawal';
+  }
+});
+
+// ================== HISTORY ==================
+function renderHistory(list){
+  const el = $('vxHistoryList');
+  $('vxHistoryCount').textContent = `${list.length} total`;
+  if(!list.length){
+    el.innerHTML = `<div class="vx-empty">No withdrawals yet.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(r => {
+    const isUSD = r.currency === 'USD';
+    const amtDisplay = isUSD
+      ? `${fmtUSD(r.amountUSD)} → ${fmtUSD(r.netAmountUSD)}`
+      : `${fmtNGN(r.amountNGN)} → ${fmtNGN(r.netAmountNGN)}`;
+    
+    const methodLabel = isUSD 
+      ? `USDT (BEP20)` 
+      : `Bank · ${r.bankName || 'NGN'}`;
+
+    return `
+      <div class="vx-pending">
+        <div class="vx-pending-top">
+          <div class="vx-pending-amt">${amtDisplay}</div>
+          <div class="vx-pending-status ${r.status}">${r.status}</div>
+        </div>
+        <div class="vx-pending-meta">
+          <span>${methodLabel}</span>
+          <span>${fmtDate(r.createdAt || r.createdAtISO)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
